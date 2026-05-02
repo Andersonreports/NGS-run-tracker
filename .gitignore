@@ -1,0 +1,22 @@
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+backend/__pycache__/
+
+# Data files
+*.xlsx
+scratch/
+
+# Env
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
