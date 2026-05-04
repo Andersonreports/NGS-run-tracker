@@ -210,8 +210,10 @@
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:1rem;align-items:center">
-          <span class="success-msg" id="save-msg" style="display:none">✓ Saved &amp; Excel downloaded</span>
-          <button class="btn" id="save-btn">Save &amp; Export Excel ↓</button>
+          <span class="success-msg" id="export-msg" style="display:none">✓ Excel downloaded</span>
+          <span class="success-msg" id="save-msg"   style="display:none">✓ Saved</span>
+          <button class="btn ghost" id="export-btn">Export Excel ↓</button>
+          <button class="btn"       id="save-btn">Save</button>
         </div>
       </div>
     </div>
@@ -339,6 +341,7 @@
           <div class="run-id">${esc(run.run_id)}</div>
           <div class="card-actions">
             <span class="badge">Active</span>
+            <button class="btn ghost" style="padding:.3rem .75rem;font-size:.75rem" data-action="export">Export ↓</button>
             <button class="btn-x" data-action="delete" title="Delete run">×</button>
           </div>
         </div>
@@ -374,6 +377,10 @@
     if (btn.dataset.action === 'toggle') {
       expandedRun = expandedRun === runId ? null : runId;
       renderView();
+    }
+    if (btn.dataset.action === 'export') {
+      const run = runs.find(r => r.run_id === runId);
+      if (run) exportExcel(run);
     }
     if (btn.dataset.action === 'delete') {
       if (!confirm(`Delete run "${runId}"?`)) return;
@@ -430,13 +437,10 @@
     updateTotals();
   }
 
-  document.getElementById('save-btn').addEventListener('click', function() {
-    const run_id = document.getElementById('f-run_id').value.trim();
-    if (!run_id) { alert('Please enter a Run ID'); return; }
-
-    const run = {
+  function readFormRun() {
+    return {
       date:            document.getElementById('f-date').value,
-      run_id,
+      run_id:          document.getElementById('f-run_id').value.trim(),
       instrument:      document.getElementById('f-instrument').value,
       flowcell:        document.getElementById('f-flowcell').value,
       seq_type:        document.getElementById('f-seq_type').value,
@@ -449,18 +453,30 @@
         remarks: document.getElementById(`m${i}`).value,
       })),
     };
+  }
 
+  function flashMsg(id) {
+    const el = document.getElementById(id);
+    el.style.display = 'inline';
+    setTimeout(() => { el.style.display = 'none'; }, 2500);
+  }
+
+  document.getElementById('save-btn').addEventListener('click', function() {
+    const run = readFormRun();
+    if (!run.run_id) { alert('Please enter a Run ID'); return; }
     const idx = runs.findIndex(r => r.run_id === run.run_id);
     if (idx >= 0) runs[idx] = run; else runs = [run, ...runs];
     persist();
-    exportExcel(run);
-
-    const msg = document.getElementById('save-msg');
-    msg.style.display = 'inline';
-    setTimeout(() => { msg.style.display = 'none'; }, 2500);
-
+    flashMsg('save-msg');
     resetForm();
     setTimeout(() => switchTab('view'), 600);
+  });
+
+  document.getElementById('export-btn').addEventListener('click', function() {
+    const run = readFormRun();
+    if (!run.run_id) { alert('Please enter a Run ID before exporting'); return; }
+    exportExcel(run);
+    flashMsg('export-msg');
   });
 
   function exportExcel(run) {
