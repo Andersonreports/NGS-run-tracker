@@ -446,7 +446,7 @@
     document.getElementById('modal-meta').innerHTML = `
       <span><strong>Date:</strong> ${esc(run.date)}</span>
       <span><strong>Instrument:</strong> ${esc(run.instrument)}</span>
-      <span><strong>Flowcell:</strong> ${esc(run.flowcell)}</span>
+      <span><strong>Flowcell:</strong> ${esc(run.flowcell).replace(/(\d+(\.\d+)?)TB/gi, (m, p1) => `${m} (${parseFloat(p1) * 1000} GB)`)}</span>
       <span><strong>Seq. Type:</strong> ${esc(run.seq_type)}</span>
       <span><strong>Loading Pattern:</strong> ${esc(run.loading_pattern)}</span>`;
 
