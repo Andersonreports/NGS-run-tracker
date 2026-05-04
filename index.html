@@ -31,6 +31,7 @@
 
     .app { max-width:1300px; margin:0 auto; padding:2.5rem; }
 
+    /* ── Header ── */
     header {
       display:flex; justify-content:space-between; align-items:center;
       margin-bottom:3rem; border-bottom:1px solid var(--border); padding-bottom:1.5rem;
@@ -50,6 +51,7 @@
     }
     .search:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-lt); background:#fff; }
 
+    /* ── Tabs ── */
     .tabs {
       display:flex; gap:.5rem; margin-bottom:2rem;
       background:#f1f5f9; padding:.25rem; border-radius:.5rem; width:fit-content;
@@ -61,11 +63,13 @@
     }
     .tab.active { background:#fff; color:var(--accent); box-shadow:0 2px 4px rgba(0,0,0,.05); }
 
+    /* ── Card (input form) ── */
     .card {
       background:var(--surface); border:1px solid var(--border);
       border-radius:.75rem; padding:2rem; box-shadow:var(--shadow);
     }
 
+    /* ── Form ── */
     .form-grid {
       display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
       gap:1.5rem; margin-bottom:2.5rem;
@@ -79,59 +83,52 @@
     }
     input:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-lt); }
 
+    /* ── Tables (shared) ── */
     .tbl-wrap { overflow-x:auto; border-radius:.5rem; border:1px solid var(--border); margin-bottom:2rem; }
     table { width:100%; border-collapse:collapse; text-align:left; }
     th {
       background:#f8fafc; padding:1rem; font-size:.75rem; font-weight:700;
       color:var(--text2); text-transform:uppercase; border-bottom:1px solid var(--border);
+      white-space:nowrap;
     }
     td { padding:.8rem 1rem; border-bottom:1px solid var(--border); font-size:.875rem; }
     tr:last-child td { border-bottom:none; }
     .total-row { background:#f8fafc; font-weight:700; }
-    .tbl-wrap input {
-      border-radius:.25rem; padding:.4rem .5rem; font-size:.8rem; width:100%;
-    }
+    .tbl-wrap input { border-radius:.25rem; padding:.4rem .5rem; font-size:.8rem; width:100%; }
 
+    /* ── Buttons ── */
     .btn {
       background:var(--accent); color:#fff; border:none;
       padding:.75rem 1.5rem; border-radius:.4rem; font-weight:600;
       cursor:pointer; transition:opacity .2s; font-family:inherit; font-size:.875rem;
     }
     .btn:hover { opacity:.9; }
-    .btn.ghost { background:#f1f5f9; color:var(--text1); }
+    .btn.ghost  { background:#f1f5f9; color:var(--text1); }
+    .btn.sm     { padding:.35rem .8rem; font-size:.75rem; }
     .btn.danger { background:#fee2e2; color:#dc2626; }
-
-    .run-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(400px,1fr)); gap:2rem; }
-    .run-card {
-      padding:1.5rem; border-left:3px solid var(--accent);
-      transition:box-shadow .2s, transform .2s; cursor:default;
-    }
-    .run-card:hover { box-shadow:0 8px 20px -4px rgb(0 0 0/.12); transform:translateY(-2px); }
-    .run-id { font-size:1.125rem; font-weight:700; margin-bottom:.25rem; }
-    .run-meta { font-size:.75rem; color:var(--text2); margin-bottom:1.5rem; display:flex; gap:.75rem; }
-    .stats { display:flex; gap:2rem; margin-bottom:1.5rem; }
-    .stat { display:flex; flex-direction:column; }
-    .stat-val { font-size:1.25rem; font-weight:700; color:var(--accent); }
-    .stat-lbl { font-size:.65rem; font-weight:700; color:var(--text2); text-transform:uppercase; }
-    .meta-box {
-      padding:.75rem 1rem; background:#f8fafc; border-radius:.5rem;
-      margin-bottom:1.25rem; border:1px solid var(--border);
-      font-size:.75rem; display:grid; grid-template-columns:1fr 2fr; row-gap:.35rem;
-    }
-    .meta-key { color:var(--text2); font-weight:600; }
-    .badge {
-      background:#ecfdf5; color:#059669; padding:.2rem .6rem;
-      border-radius:1rem; font-size:.65rem; font-weight:700;
-      text-transform:uppercase; letter-spacing:.05em;
-    }
-    .card-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.5rem; }
-    .card-actions { display:flex; gap:.5rem; align-items:center; }
-    .btn-x {
+    .btn-icon {
       background:none; border:none; cursor:pointer; color:var(--text2);
-      font-size:1.1rem; line-height:1; padding:.1rem .3rem; border-radius:.25rem;
+      font-size:1.1rem; line-height:1; padding:.2rem .4rem; border-radius:.25rem;
     }
-    .btn-x:hover { background:#fee2e2; color:#dc2626; }
+    .btn-icon:hover { background:#fee2e2; color:#dc2626; }
 
+    /* ── Filter bar ── */
+    .filter-bar {
+      display:flex; align-items:center; gap:.75rem; margin-bottom:1rem; flex-wrap:wrap;
+    }
+    .filter-bar select {
+      padding:.45rem .75rem; font-size:.8rem; min-width:120px; cursor:pointer;
+    }
+    .filter-bar label { font-size:.75rem; color:var(--text2); text-transform:uppercase; letter-spacing:.05em; }
+    .row-count { font-size:.8rem; color:var(--text2); margin-left:auto; }
+
+    /* ── Browse table rows ── */
+    .runs-table tbody tr { transition:background .15s; }
+    .runs-table tbody tr:hover { background:#f8fafc; }
+    .run-id-cell { font-weight:700; color:var(--text1); }
+    .actions-cell { display:flex; gap:.4rem; align-items:center; white-space:nowrap; }
+
+    /* ── Empty state ── */
     .empty {
       text-align:center; padding:5rem 2rem;
       border:2px dashed var(--border); border-radius:1rem;
@@ -142,6 +139,36 @@
 
     @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
     .fade-in { animation:fadeIn .35s ease-out forwards; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(15,23,42,.45); z-index:1000;
+      align-items:center; justify-content:center;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+      background:#fff; border-radius:.75rem; padding:2rem;
+      width:min(860px,94vw); max-height:88vh; overflow-y:auto;
+      box-shadow:0 20px 60px -10px rgb(0 0 0/.3);
+      position:relative; animation:fadeIn .2s ease-out;
+    }
+    .modal-header {
+      display:flex; justify-content:space-between; align-items:flex-start;
+      margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border);
+    }
+    .modal-title { font-size:1.2rem; font-weight:700; }
+    .modal-meta {
+      display:flex; flex-wrap:wrap; gap:.5rem 1.5rem;
+      font-size:.78rem; color:var(--text2); margin-top:.4rem;
+    }
+    .modal-meta span strong { color:var(--text1); }
+    .modal-close {
+      background:none; border:none; font-size:1.4rem; cursor:pointer;
+      color:var(--text2); line-height:1; padding:.2rem .5rem; border-radius:.25rem;
+      flex-shrink:0;
+    }
+    .modal-close:hover { background:#f1f5f9; color:var(--text1); }
 
     ::-webkit-scrollbar { width:6px; height:6px; }
     ::-webkit-scrollbar-track { background:#f1f5f9; }
@@ -162,13 +189,13 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
       </svg>
-      <input type="text" id="search" class="search" placeholder="Search by Run ID, Library, Date…">
+      <input type="text" id="search" class="search" placeholder="Search by Run ID, Instrument, Date…">
     </div>
   </header>
 
   <div class="tabs">
     <button class="tab active" id="tab-view">Browse Records</button>
-    <button class="tab" id="tab-input">New Entry</button>
+    <button class="tab"        id="tab-input">New Entry</button>
   </div>
 
   <main>
@@ -186,12 +213,12 @@
         </div>
 
         <div class="form-grid">
-          <div class="field"><label>Date</label>              <input type="date"   id="f-date"></div>
-          <div class="field"><label>Run Details</label>       <input type="text"   id="f-run_id"          placeholder="e.g. Run-79B"></div>
-          <div class="field"><label>Instrument</label>        <input type="text"   id="f-instrument"></div>
-          <div class="field"><label>Flowcell</label>          <input type="text"   id="f-flowcell"        placeholder="e.g. FCP(1.1TB)"></div>
-          <div class="field"><label>Seq. Type</label>         <input type="text"   id="f-seq_type"></div>
-          <div class="field"><label>Loading Pattern</label>   <input type="text"   id="f-loading_pattern"></div>
+          <div class="field"><label>Date</label>            <input type="date" id="f-date"></div>
+          <div class="field"><label>Run Details</label>     <input type="text" id="f-run_id"          placeholder="e.g. Run-79B"></div>
+          <div class="field"><label>Instrument</label>      <input type="text" id="f-instrument"></div>
+          <div class="field"><label>Flowcell</label>        <input type="text" id="f-flowcell"        placeholder="e.g. FCP(1.1TB)"></div>
+          <div class="field"><label>Seq. Type</label>       <input type="text" id="f-seq_type"></div>
+          <div class="field"><label>Loading Pattern</label> <input type="text" id="f-loading_pattern"></div>
         </div>
 
         <div class="tbl-wrap">
@@ -203,10 +230,14 @@
                 <th style="width:150px">No. of Samples</th>
                 <th style="width:165px">Required Reads (GB)</th>
                 <th>Remarks</th>
+                <th style="width:40px"></th>
               </tr>
             </thead>
             <tbody id="lib-body"></tbody>
           </table>
+        </div>
+        <div style="margin-top:-1.5rem;margin-bottom:1.5rem">
+          <button class="btn ghost sm" id="add-lib-btn">+ Add Library</button>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:1rem;align-items:center">
@@ -221,8 +252,25 @@
 
 </div>
 
+<!-- LIBRARY MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-meta"  id="modal-meta"></div>
+      </div>
+      <button class="modal-close" id="modal-close">×</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <script>
   const STORAGE_KEY = 'ngs_runs_v1';
+
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
 
   const LIBRARIES = [
     { s_no:  1, name: 'Exome_AND-TP-511,514,515,516,517',  remarks: '' },
@@ -241,14 +289,9 @@
 
   // ── State ──────────────────────────────────────────────
   let runs = [];
-  let expandedRun = null;
-  let activeTab = 'view';
-
   try { const s = localStorage.getItem(STORAGE_KEY); if (s) runs = JSON.parse(s); } catch(e) {}
-
   function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(runs)); }
 
-  // ── Escape helper (prevents XSS when inserting user data into innerHTML) ──
   function esc(s) {
     return String(s ?? '')
       .replace(/&/g,'&amp;').replace(/</g,'&lt;')
@@ -260,7 +303,6 @@
   document.getElementById('tab-input').addEventListener('click', () => switchTab('input'));
 
   function switchTab(tab) {
-    activeTab = tab;
     document.getElementById('tab-view').classList.toggle('active',  tab === 'view');
     document.getElementById('tab-input').classList.toggle('active', tab === 'input');
     document.getElementById('view-section').style.display  = tab === 'view'  ? '' : 'none';
@@ -268,12 +310,10 @@
     if (tab === 'view') renderView();
   }
 
-  // ── Search ─────────────────────────────────────────────
-  document.getElementById('search').addEventListener('input', function() { renderView(); });
+  document.getElementById('search').addEventListener('input', renderView);
 
-  // ── VIEW ───────────────────────────────────────────────
+  // ── VIEW — table + filters ─────────────────────────────
   function renderView() {
-    const q   = document.getElementById('search').value.toLowerCase();
     const out = document.getElementById('view-section');
 
     if (runs.length === 0) {
@@ -285,131 +325,220 @@
       return;
     }
 
-    const filtered = runs.filter(r =>
-      r.run_id.toLowerCase().includes(q) ||
-      r.instrument.toLowerCase().includes(q) ||
-      r.date.includes(q) ||
-      r.flowcell.toLowerCase().includes(q) ||
-      r.libraries.some(l =>
-        l.name.toLowerCase().includes(q) ||
-        (l.remarks && l.remarks.toLowerCase().includes(q))
-      )
-    );
+    // Build year options from data
+    const years = [...new Set(runs.map(r => r.date.slice(0,4)))].sort().reverse();
 
-    if (filtered.length === 0) {
-      out.innerHTML = `<div class="empty"><p>No records match <strong>"${esc(q)}"</strong></p></div>`;
-      return;
-    }
+    // Read current filter values (preserve across re-renders)
+    const selYear  = document.getElementById('f-year')  ? document.getElementById('f-year').value  : '';
+    const selMonth = document.getElementById('f-month') ? document.getElementById('f-month').value : '';
+    const q        = document.getElementById('search').value.toLowerCase();
 
-    out.innerHTML = `<div class="run-grid">${filtered.map((r,i) => cardHTML(r,i)).join('')}</div>`;
-  }
+    const filtered = runs.filter(r => {
+      if (selYear  && r.date.slice(0,4)  !== selYear)  return false;
+      if (selMonth && r.date.slice(5,7)  !== selMonth) return false;
+      if (q && !(
+        r.run_id.toLowerCase().includes(q) ||
+        r.instrument.toLowerCase().includes(q) ||
+        r.date.includes(q) ||
+        r.flowcell.toLowerCase().includes(q) ||
+        r.libraries.some(l => l.name.toLowerCase().includes(q))
+      )) return false;
+      return true;
+    });
 
-  function cardHTML(run, idx) {
-    const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
-    const totalReads   = run.libraries.reduce((s,l) => s + l.reads,   0);
-    const activeLibs   = run.libraries.filter(l => l.samples > 0);
-    const open         = expandedRun === run.run_id;
+    const yearOpts = years.map(y =>
+      `<option value="${y}" ${y === selYear ? 'selected' : ''}>${y}</option>`
+    ).join('');
 
-    const libTable = open ? `
-      <div class="tbl-wrap" style="max-height:280px;overflow-y:auto;margin-bottom:1rem">
-        <table style="font-size:.78rem">
-          <thead>
-            <tr>
-              <th style="padding:.5rem .75rem">S.No</th>
-              <th style="padding:.5rem .75rem">Library</th>
-              <th style="padding:.5rem .75rem">Samples</th>
-              <th style="padding:.5rem .75rem">Reads (GB)</th>
-              <th style="padding:.5rem .75rem">Remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${run.libraries.map(l => `
-              <tr style="opacity:${l.samples === 0 ? .45 : 1}">
-                <td style="padding:.45rem .75rem;text-align:center">${l.s_no}</td>
-                <td style="padding:.45rem .75rem">${esc(l.name)}</td>
-                <td style="padding:.45rem .75rem">${l.samples}</td>
-                <td style="padding:.45rem .75rem">${l.reads}</td>
-                <td style="padding:.45rem .75rem;color:var(--text2)">${esc(l.remarks)}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>` : '';
+    const monthOpts = MONTHS.map((m,i) => {
+      const val = String(i+1).padStart(2,'0');
+      return `<option value="${val}" ${val === selMonth ? 'selected' : ''}>${m}</option>`;
+    }).join('');
 
-    return `
-      <div class="card run-card fade-in" style="animation-delay:${idx*.04}s" data-run-id="${esc(run.run_id)}">
-        <div class="card-head">
-          <div class="run-id">${esc(run.run_id)}</div>
-          <div class="card-actions">
-            <span class="badge">Active</span>
-            <button class="btn ghost" style="padding:.3rem .75rem;font-size:.75rem" data-action="export">Export ↓</button>
-            <button class="btn-x" data-action="delete" title="Delete run">×</button>
-          </div>
+    const rows = filtered.length === 0
+      ? `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text2)">No records match the current filters.</td></tr>`
+      : filtered.map((run, idx) => {
+          const activeLibs  = run.libraries.filter(l => l.samples > 0);
+          const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
+          return `
+            <tr class="fade-in" style="animation-delay:${idx*.03}s" data-run-id="${esc(run.run_id)}">
+              <td class="run-id-cell">${esc(run.run_id)}</td>
+              <td>${esc(run.date)}</td>
+              <td>${esc(run.instrument)}</td>
+              <td>${esc(run.flowcell)}</td>
+              <td style="text-align:center">${activeLibs.length}</td>
+              <td style="text-align:center;font-weight:600;color:var(--accent)">${totalSamples}</td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn sm" data-action="view-libs">View Libraries</button>
+                  <button class="btn sm ghost" data-action="export">Export ↓</button>
+                  <button class="btn-icon" data-action="delete" title="Delete">×</button>
+                </div>
+              </td>
+            </tr>`;
+        }).join('');
+
+    out.innerHTML = `
+      <div class="card" style="padding:1.5rem">
+        <div class="filter-bar">
+          <label>Year</label>
+          <select id="f-year">
+            <option value="">All Years</option>
+            ${yearOpts}
+          </select>
+          <label>Month</label>
+          <select id="f-month">
+            <option value="">All Months</option>
+            ${monthOpts}
+          </select>
+          <span class="row-count">${filtered.length} record${filtered.length !== 1 ? 's' : ''}</span>
         </div>
-        <div class="run-meta">
-          <span>${esc(run.date)}</span><span>·</span>
-          <span>${esc(run.instrument)}</span><span>·</span>
-          <span>${esc(run.flowcell)}</span>
+        <div class="tbl-wrap" style="margin-bottom:0">
+          <table class="runs-table">
+            <thead>
+              <tr>
+                <th>Run</th>
+                <th>Date</th>
+                <th>SurfSeq No.</th>
+                <th>FCP</th>
+                <th style="text-align:center">Libraries</th>
+                <th style="text-align:center">Samples</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
         </div>
-        <div class="stats">
-          <div class="stat"><span class="stat-lbl">Libraries</span><span class="stat-val">${activeLibs.length}</span></div>
-          <div class="stat"><span class="stat-lbl">Samples</span><span class="stat-val">${totalSamples}</span></div>
-          <div class="stat"><span class="stat-lbl">Reads (GB)</span><span class="stat-val">${totalReads.toFixed(1)}</span></div>
-        </div>
-        <div class="meta-box">
-          <span class="meta-key">Seq Type</span><span>${esc(run.seq_type)}</span>
-          <span class="meta-key">Pattern</span><span>${esc(run.loading_pattern)}</span>
-        </div>
-        ${libTable}
-        <button class="btn ${open ? 'ghost' : ''}" style="width:100%" data-action="toggle">
-          ${open ? 'Collapse' : 'View Library Details'}
-        </button>
       </div>`;
+
+    document.getElementById('f-year').addEventListener('change',  renderView);
+    document.getElementById('f-month').addEventListener('change', renderView);
   }
 
-  // Event delegation for run cards
+  // Event delegation — table rows
   document.getElementById('view-section').addEventListener('click', function(e) {
-    const btn   = e.target.closest('[data-action]');
+    const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const card  = btn.closest('[data-run-id]');
-    if (!card) return;
-    const runId = card.dataset.runId;
+    const row   = btn.closest('[data-run-id]');
+    if (!row) return;
+    const runId = row.dataset.runId;
+    const run   = runs.find(r => r.run_id === runId);
 
-    if (btn.dataset.action === 'toggle') {
-      expandedRun = expandedRun === runId ? null : runId;
-      renderView();
-    }
-    if (btn.dataset.action === 'export') {
-      const run = runs.find(r => r.run_id === runId);
-      if (run) exportExcel(run);
-    }
+    if (btn.dataset.action === 'view-libs' && run) openModal(run);
+    if (btn.dataset.action === 'export'    && run) exportExcel(run);
     if (btn.dataset.action === 'delete') {
       if (!confirm(`Delete run "${runId}"?`)) return;
       runs = runs.filter(r => r.run_id !== runId);
       persist();
-      if (expandedRun === runId) expandedRun = null;
       renderView();
     }
   });
 
+  // ── Modal ──────────────────────────────────────────────
+  function openModal(run) {
+    const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
+    const totalReads   = run.libraries.reduce((s,l) => s + l.reads,   0);
+
+    document.getElementById('modal-title').textContent = run.run_id;
+    document.getElementById('modal-meta').innerHTML = `
+      <span><strong>Date:</strong> ${esc(run.date)}</span>
+      <span><strong>Instrument:</strong> ${esc(run.instrument)}</span>
+      <span><strong>Flowcell:</strong> ${esc(run.flowcell)}</span>
+      <span><strong>Seq. Type:</strong> ${esc(run.seq_type)}</span>
+      <span><strong>Loading Pattern:</strong> ${esc(run.loading_pattern)}</span>`;
+
+    document.getElementById('modal-body').innerHTML = `
+      <div class="tbl-wrap" style="margin-bottom:0">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:56px">S.No</th>
+              <th>Name of Library</th>
+              <th style="width:110px;text-align:center">Samples</th>
+              <th style="width:130px;text-align:center">Reads (GB)</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${run.libraries.map(l => `
+              <tr style="opacity:${l.samples === 0 ? .4 : 1}">
+                <td style="text-align:center;color:var(--text2)">${l.s_no}</td>
+                <td style="font-weight:${l.samples > 0 ? 600 : 400}">${esc(l.name)}</td>
+                <td style="text-align:center">${l.samples}</td>
+                <td style="text-align:center">${l.reads}</td>
+                <td style="color:var(--text2)">${esc(l.remarks)}</td>
+              </tr>`).join('')}
+            <tr class="total-row">
+              <td colspan="2" style="text-align:right;padding-right:1.5rem">Total</td>
+              <td style="text-align:center">${totalSamples}</td>
+              <td style="text-align:center">${totalReads.toFixed(1)}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>`;
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
   // ── INPUT FORM ─────────────────────────────────────────
+  let dynLibs = [];   // [{id}] for custom rows added by user
+  let dynCtr  = 0;
+
   function buildLibTable() {
     const tbody = document.getElementById('lib-body');
     tbody.innerHTML = LIBRARIES.map((lib, i) => `
       <tr>
         <td style="text-align:center;color:var(--text2);font-weight:600">${lib.s_no}</td>
         <td style="font-weight:500;padding-left:1rem">${lib.name}</td>
-        <td><input type="number" min="0"       id="s${i}" placeholder="0"  ></td>
+        <td><input type="number" min="0"        id="s${i}" placeholder="0"  ></td>
         <td><input type="number" min="0" step=".1" id="r${i}" placeholder="0.0"></td>
-        <td><input type="text"                 id="m${i}" value="${esc(lib.remarks)}"></td>
+        <td><input type="text"                  id="m${i}" value="${esc(lib.remarks)}"></td>
+        <td></td>
       </tr>`).join('') + `
-      <tr class="total-row">
+      <tr class="total-row" id="total-row">
         <td colspan="2" style="text-align:right;padding-right:1.5rem;font-weight:700">Total</td>
         <td id="tot-s" style="font-weight:700">0</td>
         <td id="tot-r" style="font-weight:700">0.0</td>
-        <td></td>
+        <td></td><td></td>
       </tr>`;
-
     tbody.addEventListener('input', updateTotals);
+  }
+
+  function addDynRow() {
+    const id  = ++dynCtr;
+    dynLibs.push({ id });
+    const totalRow = document.getElementById('total-row');
+    const tr = document.createElement('tr');
+    tr.id = `dyn-${id}`;
+    tr.innerHTML = `
+      <td style="text-align:center;color:var(--text2);font-weight:600">—</td>
+      <td><input type="text"   id="dn${id}" placeholder="Library name" style="width:100%"></td>
+      <td><input type="number" min="0"        id="ds${id}" placeholder="0"   style="width:100%"></td>
+      <td><input type="number" min="0" step=".1" id="dr${id}" placeholder="0.0" style="width:100%"></td>
+      <td><input type="text"   id="dm${id}" placeholder="" style="width:100%"></td>
+      <td><button class="btn-icon" onclick="removeDynRow(${id})" title="Remove">×</button></td>`;
+    tr.addEventListener('input', updateTotals);
+    totalRow.parentNode.insertBefore(tr, totalRow);
+  }
+
+  function removeDynRow(id) {
+    dynLibs = dynLibs.filter(l => l.id !== id);
+    const el = document.getElementById(`dyn-${id}`);
+    if (el) el.remove();
+    updateTotals();
   }
 
   function updateTotals() {
@@ -418,22 +547,29 @@
       ts += Number(document.getElementById(`s${i}`).value) || 0;
       tr += Number(document.getElementById(`r${i}`).value) || 0;
     });
+    dynLibs.forEach(l => {
+      ts += Number(document.getElementById(`ds${l.id}`)?.value) || 0;
+      tr += Number(document.getElementById(`dr${l.id}`)?.value) || 0;
+    });
     document.getElementById('tot-s').textContent = ts;
     document.getElementById('tot-r').textContent = tr.toFixed(1);
   }
 
   function resetForm() {
-    document.getElementById('f-date').value           = new Date().toISOString().split('T')[0];
-    document.getElementById('f-run_id').value         = '';
-    document.getElementById('f-instrument').value     = 'Surfseq5000';
-    document.getElementById('f-flowcell').value       = '';
-    document.getElementById('f-seq_type').value       = 'PE 150';
-    document.getElementById('f-loading_pattern').value= 'Standard-Automatic';
+    document.getElementById('f-date').value            = new Date().toISOString().split('T')[0];
+    document.getElementById('f-run_id').value          = '';
+    document.getElementById('f-instrument').value      = 'Surfseq5000';
+    document.getElementById('f-flowcell').value        = '';
+    document.getElementById('f-seq_type').value        = 'PE 150';
+    document.getElementById('f-loading_pattern').value = 'Standard-Automatic';
     LIBRARIES.forEach((lib,i) => {
       document.getElementById(`s${i}`).value = '';
       document.getElementById(`r${i}`).value = '';
       document.getElementById(`m${i}`).value = lib.remarks;
     });
+    // Remove all dynamic rows
+    dynLibs.forEach(l => { const el = document.getElementById(`dyn-${l.id}`); if (el) el.remove(); });
+    dynLibs = [];
     updateTotals();
   }
 
@@ -445,15 +581,26 @@
       flowcell:        document.getElementById('f-flowcell').value,
       seq_type:        document.getElementById('f-seq_type').value,
       loading_pattern: document.getElementById('f-loading_pattern').value,
-      libraries: LIBRARIES.map((lib,i) => ({
-        s_no:    lib.s_no,
-        name:    lib.name,
-        samples: Number(document.getElementById(`s${i}`).value) || 0,
-        reads:   Number(document.getElementById(`r${i}`).value) || 0,
-        remarks: document.getElementById(`m${i}`).value,
-      })),
+      libraries: [
+        ...LIBRARIES.map((lib,i) => ({
+          s_no:    lib.s_no,
+          name:    lib.name,
+          samples: Number(document.getElementById(`s${i}`).value) || 0,
+          reads:   Number(document.getElementById(`r${i}`).value) || 0,
+          remarks: document.getElementById(`m${i}`).value,
+        })),
+        ...dynLibs.map(l => ({
+          s_no:    '—',
+          name:    document.getElementById(`dn${l.id}`)?.value.trim() || 'Custom Library',
+          samples: Number(document.getElementById(`ds${l.id}`)?.value) || 0,
+          reads:   Number(document.getElementById(`dr${l.id}`)?.value) || 0,
+          remarks: document.getElementById(`dm${l.id}`)?.value || '',
+        })).filter(l => l.name !== 'Custom Library' || l.samples > 0),
+      ],
     };
   }
+
+  document.getElementById('add-lib-btn').addEventListener('click', addDynRow);
 
   function flashMsg(id) {
     const el = document.getElementById(id);
@@ -479,23 +626,20 @@
     flashMsg('export-msg');
   });
 
+  // ── Excel export ───────────────────────────────────────
   function exportExcel(run) {
     const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
     const totalReads   = run.libraries.reduce((s,l) => s + l.reads,   0);
-
     const wb = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
       ['Date','Run ID','Instrument','Flowcell','Seq. Type','Loading Pattern'],
       [run.date, run.run_id, run.instrument, run.flowcell, run.seq_type, run.loading_pattern],
     ]), 'Run Details');
-
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
       ['S. No.','Name of Library','No. of Samples','Required Reads (GB)','Remarks'],
       ...run.libraries.map(l => [l.s_no, l.name, l.samples, l.reads, l.remarks]),
       ['','Total', totalSamples, totalReads.toFixed(1), ''],
     ]), 'Libraries');
-
     XLSX.writeFile(wb, `${run.run_id}_${run.date}.xlsx`);
   }
 
