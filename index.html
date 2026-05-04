@@ -216,7 +216,7 @@
           <div class="field"><label>Date</label>            <input type="date" id="f-date"></div>
           <div class="field"><label>Run Details</label>     <input type="text" id="f-run_id"          placeholder="e.g. Run-79B"></div>
           <div class="field"><label>Instrument</label>      <input type="text" id="f-instrument"></div>
-          <div class="field"><label>Flowcell</label>        <input type="text" id="f-flowcell"        placeholder="e.g. FCP(1.1TB)"></div>
+          <div class="field"><label>Flowcell</label>        <input type="text" id="f-flowcell"        placeholder="e.g. 1.1TB (1100 GB)"></div>
           <div class="field"><label>Seq. Type</label>       <input type="text" id="f-seq_type"></div>
           <div class="field"><label>Loading Pattern</label> <input type="text" id="f-loading_pattern"></div>
         </div>
@@ -366,7 +366,7 @@
               <td class="run-id-cell">${esc(run.run_id)}</td>
               <td>${esc(run.date)}</td>
               <td>${esc(run.instrument)}</td>
-              <td>${esc(run.flowcell)}</td>
+              <td>${esc(run.flowcell).replace(/(\d+(\.\d+)?)TB/gi, (m, p1) => `${m} (${parseFloat(p1) * 1000} GB)`)}</td>
               <td style="text-align:center">${activeLibs.length}</td>
               <td style="text-align:center;font-weight:600;color:var(--accent)">${totalSamples}</td>
               <td style="text-align:center">${totalReads.toFixed(1)} (${(totalReads / 1000).toFixed(2)} TB)</td>
