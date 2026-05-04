@@ -356,10 +356,11 @@
     }).join('');
 
     const rows = filtered.length === 0
-      ? `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text2)">No records match the current filters.</td></tr>`
+      ? `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text2)">No records match the current filters.</td></tr>`
       : filtered.map((run, idx) => {
           const activeLibs  = run.libraries.filter(l => l.samples > 0);
           const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
+          const totalReads   = run.libraries.reduce((s,l) => s + l.reads,   0);
           return `
             <tr class="fade-in" style="animation-delay:${idx*.03}s" data-run-id="${esc(run.run_id)}">
               <td class="run-id-cell">${esc(run.run_id)}</td>
@@ -368,6 +369,7 @@
               <td>${esc(run.flowcell)}</td>
               <td style="text-align:center">${activeLibs.length}</td>
               <td style="text-align:center;font-weight:600;color:var(--accent)">${totalSamples}</td>
+              <td style="text-align:center">${totalReads.toFixed(1)} (${(totalReads / 1000).toFixed(2)} TB)</td>
               <td>
                 <div class="actions-cell">
                   <button class="btn sm" data-action="view-libs">View Libraries</button>
@@ -403,6 +405,7 @@
                 <th>FCP</th>
                 <th style="text-align:center">Libraries</th>
                 <th style="text-align:center">Samples</th>
+                <th style="text-align:center">Reads (GB)</th>
                 <th>Actions</th>
               </tr>
             </thead>
