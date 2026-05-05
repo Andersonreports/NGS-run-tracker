@@ -999,48 +999,52 @@
 
     // ── Excel export ───────────────────────────────────────
     function exportExcel(run) {
-      const totalSamples = run.libraries.reduce((s, l) => s + l.samples, 0);
-      const totalReads = run.libraries.reduce((s, l) => s + l.reads, 0);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
-        ['Date', 'Run ID', 'Instrument', 'Flowcell', 'Seq. Type', 'Loading Pattern'],
-        [formatDate(run.date), run.run_id, run.instrument, run.flowcell, run.seq_type, run.loading_pattern],
-      ]), 'Run Details');
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
-        ['S. No.', 'Name of Library', 'No. of Samples', 'Required Reads (GB)', 'Remarks'],
-        ...run.libraries.map(l => [l.s_no, l.name, l.samples, l.reads, l.remarks]),
-        ['', 'Total', totalSamples, totalReads.toFixed(1), ''],
-      ]), 'Libraries');
+      const rows = [
+        [`RUN: ${run.run_id}`],
+        ['S.No', 'Name of Library', 'Samples', 'Reads (GB)', 'Remarks']
+      ];
+      
+      run.libraries.forEach(l => {
+        rows.push([l.s_no, l.name, l.samples, l.reads, l.remarks]);
+      });
+      
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }]; // Merge Run ID header
+      
+      XLSX.utils.book_append_sheet(wb, ws, 'Libraries');
       XLSX.writeFile(wb, `${run.run_id}_${formatDate(run.date)}.xlsx`);
     }
 
     function exportAllExcel() {
       if (!runs || runs.length === 0) { alert('No data to export'); return; }
-      
       const wb = XLSX.utils.book_new();
-      
-      // Sheet 1: All Runs Summary
-      const runsRows = [
-        ['Date', 'Run ID', 'Instrument', 'Flowcell', 'Seq. Type', 'Loading Pattern', 'Total Samples', 'Total Reads (GB)']
-      ];
-      runs.forEach(r => {
-        const ts = r.libraries.reduce((s, l) => s + l.samples, 0);
-        const tr = r.libraries.reduce((s, l) => s + l.reads, 0);
-        runsRows.push([formatDate(r.date), r.run_id, r.instrument, r.flowcell, r.seq_type, r.loading_pattern, ts, tr.toFixed(1)]);
-      });
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(runsRows), 'All Runs Summary');
-      
-      // Sheet 2: All Libraries Consolidated
-      const libsRows = [
-        ['Run ID', 'Date', 'S.No', 'Library Name', 'Samples', 'Reads (GB)', 'Remarks']
-      ];
-      runs.forEach(r => {
+      const rows = [];
+      const merges = [];
+
+      runs.forEach((r, idx) => {
+        const startRow = rows.length;
+        
+        // Add Run Header
+        rows.push([`RUN: ${r.run_id} (${formatDate(r.date)})`]);
+        merges.push({ s: { r: startRow, c: 0 }, e: { r: startRow, c: 4 } });
+
+        // Add Column Headers
+        rows.push(['S.No', 'Name of Library', 'Samples', 'Reads (GB)', 'Remarks']);
+        
+        // Add Data
         r.libraries.forEach(l => {
-          libsRows.push([r.run_id, formatDate(r.date), l.s_no, l.name, l.samples, l.reads, l.remarks]);
+          rows.push([l.s_no, l.name, l.samples, l.reads, l.remarks]);
         });
+
+        // Add empty row for spacing
+        rows.push([]);
       });
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(libsRows), 'All Libraries');
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!merges'] = merges;
       
+      XLSX.utils.book_append_sheet(wb, ws, 'All Libraries');
       XLSX.writeFile(wb, `NGS_Run_Tracker_All_Records_${formatDate(new Date())}.xlsx`);
     }
 
