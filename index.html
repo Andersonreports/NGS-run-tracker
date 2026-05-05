@@ -18,6 +18,7 @@
       --border:    #e2e8f0;
       --success:   #10b981;
       --shadow:    0 4px 6px -1px rgb(0 0 0/.1), 0 2px 4px -2px rgb(0 0 0/.1);
+      --loading:   #6366f1;
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
@@ -174,6 +175,22 @@
     ::-webkit-scrollbar-track { background:#f1f5f9; }
     ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
     ::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+
+    /* ── Loading Overlay ── */
+    #loading-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.7);
+      display: none; align-items: center; justify-content: center;
+      z-index: 2000; flex-direction: column; gap: 1rem;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid var(--border);
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -266,8 +283,15 @@
   </div>
 </div>
 
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <p style="font-weight: 600; color: var(--text2)">Syncing with Google Sheets...</p>
+</div>
+
 <script>
-  const STORAGE_KEY = 'ngs_runs_v1';
+  // ── Configuration ──
+  // IMPORTANT: Replace this with your Google Apps Script Web App URL
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxKh2maAQf__hmGEJge5qFLUY9MDU3I3uMUrMB_DijzMEGOEWXJtTd9DQN7LUXgBrCz/exec';
 
   const MONTHS = ['January','February','March','April','May','June',
                   'July','August','September','October','November','December'];
@@ -289,8 +313,44 @@
 
   // ── State ──────────────────────────────────────────────
   let runs = [];
-  try { const s = localStorage.getItem(STORAGE_KEY); if (s) runs = JSON.parse(s); } catch(e) {}
-  function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(runs)); }
+
+  function showLoading(show) {
+    document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+  }
+
+  async function fetchRuns() {
+    try {
+      showLoading(true);
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error('Network response was not ok');
+      runs = await res.json();
+      renderView();
+    } catch(e) {
+      console.error('Fetch error:', e);
+      // Fallback to local if fetch fails (optional)
+      const s = localStorage.getItem('ngs_runs_v1');
+      if (s) runs = JSON.parse(s);
+    } finally {
+      showLoading(false);
+    }
+  }
+
+  async function apiPost(data) {
+    try {
+      showLoading(true);
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      return await res.json();
+    } catch(e) {
+      console.error('API Error:', e);
+      alert('Action failed. Please check your internet connection and API_URL.');
+      return { status: 'error' };
+    } finally {
+      showLoading(false);
+    }
+  }
 
   function esc(s) {
     return String(s ?? '')
@@ -307,7 +367,7 @@
     document.getElementById('tab-input').classList.toggle('active', tab === 'input');
     document.getElementById('view-section').style.display  = tab === 'view'  ? '' : 'none';
     document.getElementById('input-section').style.display = tab === 'input' ? '' : 'none';
-    if (tab === 'view') renderView();
+    if (tab === 'view') fetchRuns();
   }
 
   document.getElementById('search').addEventListener('input', renderView);
@@ -431,9 +491,9 @@
     if (btn.dataset.action === 'export'    && run) exportExcel(run);
     if (btn.dataset.action === 'delete') {
       if (!confirm(`Delete run "${runId}"?`)) return;
-      runs = runs.filter(r => r.run_id !== runId);
-      persist();
-      renderView();
+      apiPost({ action: 'delete', run_id: runId }).then(res => {
+        if (res.status === 'success') fetchRuns();
+      });
     }
   });
 
@@ -611,15 +671,16 @@
     setTimeout(() => { el.style.display = 'none'; }, 2500);
   }
 
-  document.getElementById('save-btn').addEventListener('click', function() {
+  document.getElementById('save-btn').addEventListener('click', async function() {
     const run = readFormRun();
     if (!run.run_id) { alert('Please enter a Run ID'); return; }
-    const idx = runs.findIndex(r => r.run_id === run.run_id);
-    if (idx >= 0) runs[idx] = run; else runs = [run, ...runs];
-    persist();
-    flashMsg('save-msg');
-    resetForm();
-    setTimeout(() => switchTab('view'), 600);
+    
+    const res = await apiPost({ action: 'save', run });
+    if (res.status === 'success') {
+      flashMsg('save-msg');
+      resetForm();
+      setTimeout(() => switchTab('view'), 600);
+    }
   });
 
   document.getElementById('export-btn').addEventListener('click', function() {
@@ -649,7 +710,7 @@
   // ── Init ───────────────────────────────────────────────
   buildLibTable();
   resetForm();
-  renderView();
+  fetchRuns();
 </script>
 </body>
 </html>
