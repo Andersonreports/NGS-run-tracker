@@ -652,6 +652,16 @@
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    function formatDate(str) {
+      if (!str) return '';
+      const d = new Date(str);
+      if (isNaN(d.getTime())) return str;
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${dd}-${mm}-${yyyy}`;
+    }
+
     // ── Tabs ───────────────────────────────────────────────
     document.getElementById('tab-view').addEventListener('click', () => switchTab('view'));
     document.getElementById('tab-input').addEventListener('click', () => switchTab('input'));
@@ -718,7 +728,7 @@
           return `
             <tr class="fade-in" style="animation-delay:${idx * .03}s" data-run-id="${esc(run.run_id)}">
               <td class="run-id-cell">${esc(run.run_id)}</td>
-              <td>${esc(run.date)}</td>
+              <td>${formatDate(run.date)}</td>
               <td>${esc(run.instrument)}</td>
               <td>${esc(run.flowcell).replace(/(\d+(\.\d+)?)TB/gi, (m, p1) => `${m} (${parseFloat(p1) * 1000} GB)`)}</td>
               <td style="text-align:center">${activeLibs.length}</td>
@@ -765,11 +775,14 @@
             </thead>
             <tbody>${rows}</tbody>
           </table>
+        <div style="display:flex;justify-content:flex-end;margin-top:1.5rem">
+          <button class="btn ghost" id="export-all-btn">Export All Records ↓</button>
         </div>
       </div>`;
 
       document.getElementById('f-year').addEventListener('change', renderView);
       document.getElementById('f-month').addEventListener('change', renderView);
+      document.getElementById('export-all-btn').addEventListener('click', exportAllExcel);
     }
 
     // Event delegation — table rows
@@ -991,14 +1004,44 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
         ['Date', 'Run ID', 'Instrument', 'Flowcell', 'Seq. Type', 'Loading Pattern'],
-        [run.date, run.run_id, run.instrument, run.flowcell, run.seq_type, run.loading_pattern],
+        [formatDate(run.date), run.run_id, run.instrument, run.flowcell, run.seq_type, run.loading_pattern],
       ]), 'Run Details');
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
         ['S. No.', 'Name of Library', 'No. of Samples', 'Required Reads (GB)', 'Remarks'],
         ...run.libraries.map(l => [l.s_no, l.name, l.samples, l.reads, l.remarks]),
         ['', 'Total', totalSamples, totalReads.toFixed(1), ''],
       ]), 'Libraries');
-      XLSX.writeFile(wb, `${run.run_id}_${run.date}.xlsx`);
+      XLSX.writeFile(wb, `${run.run_id}_${formatDate(run.date)}.xlsx`);
+    }
+
+    function exportAllExcel() {
+      if (!runs || runs.length === 0) { alert('No data to export'); return; }
+      
+      const wb = XLSX.utils.book_new();
+      
+      // Sheet 1: All Runs Summary
+      const runsRows = [
+        ['Date', 'Run ID', 'Instrument', 'Flowcell', 'Seq. Type', 'Loading Pattern', 'Total Samples', 'Total Reads (GB)']
+      ];
+      runs.forEach(r => {
+        const ts = r.libraries.reduce((s, l) => s + l.samples, 0);
+        const tr = r.libraries.reduce((s, l) => s + l.reads, 0);
+        runsRows.push([formatDate(r.date), r.run_id, r.instrument, r.flowcell, r.seq_type, r.loading_pattern, ts, tr.toFixed(1)]);
+      });
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(runsRows), 'All Runs Summary');
+      
+      // Sheet 2: All Libraries Consolidated
+      const libsRows = [
+        ['Run ID', 'Date', 'S.No', 'Library Name', 'Samples', 'Reads (GB)', 'Remarks']
+      ];
+      runs.forEach(r => {
+        r.libraries.forEach(l => {
+          libsRows.push([r.run_id, formatDate(r.date), l.s_no, l.name, l.samples, l.reads, l.remarks]);
+        });
+      });
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(libsRows), 'All Libraries');
+      
+      XLSX.writeFile(wb, `NGS_Run_Tracker_All_Records_${formatDate(new Date())}.xlsx`);
     }
 
     // ── Init ───────────────────────────────────────────────
