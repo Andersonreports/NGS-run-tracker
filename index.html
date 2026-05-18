@@ -381,6 +381,24 @@
       border-radius: .4rem;
     }
 
+    .filter-bar input[type="date"] {
+      padding: .45rem .75rem;
+      font-size: .8rem;
+      cursor: pointer;
+      border-radius: .4rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text1);
+      outline: none;
+      font-family: inherit;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .filter-bar input[type="date"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-lt);
+    }
+
     .row-count {
       margin-left: auto;
       font-size: .73rem;
@@ -801,13 +819,15 @@
       }
 
       const years = [...new Set(runs.map(r => r.date.slice(0,4)))].sort().reverse();
-      const selYear  = document.getElementById('f-year')  ? document.getElementById('f-year').value  : '';
-      const selMonth = document.getElementById('f-month') ? document.getElementById('f-month').value : '';
+      const selYear  = document.getElementById('f-year')        ? document.getElementById('f-year').value        : (years.length > 0 ? years[0] : '');
+      const selMonth = document.getElementById('f-month')       ? document.getElementById('f-month').value       : '';
+      const selDate  = document.getElementById('f-date-filter') ? document.getElementById('f-date-filter').value : '';
       const q = document.getElementById('search').value.toLowerCase();
 
       const filtered = runs.filter(r => {
         if (selYear  && r.date.slice(0,4) !== selYear)  return false;
         if (selMonth && r.date.slice(5,7) !== selMonth) return false;
+        if (selDate  && r.date !== selDate)              return false;
         if (q && !(
           r.run_id.toLowerCase().includes(q) ||
           r.instrument.toLowerCase().includes(q) ||
@@ -859,7 +879,6 @@
             <div class="filter-bar" style="margin:0">
               <span class="filter-label">Year</span>
               <select id="f-year">
-                <option value="">All Years</option>
                 ${yearOpts}
               </select>
               <span class="filter-label">Month</span>
@@ -867,6 +886,8 @@
                 <option value="">All Months</option>
                 ${monthOpts}
               </select>
+              <span class="filter-label">Date</span>
+              <input type="date" id="f-date-filter" value="${selDate}">
               <span class="row-count">${filtered.length} record${filtered.length !== 1 ? 's' : ''}</span>
             </div>
           </div>
@@ -894,6 +915,7 @@
 
       document.getElementById('f-year').addEventListener('change', renderView);
       document.getElementById('f-month').addEventListener('change', renderView);
+      document.getElementById('f-date-filter').addEventListener('change', renderView);
       document.getElementById('export-all-btn').addEventListener('click', exportAllExcel);
     }
 
