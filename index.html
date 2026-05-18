@@ -10,21 +10,24 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
-      --bg: #f1f5f9;
+      --bg: #eef2f7;
       --surface: #ffffff;
-      --accent: #2563eb;
-      --accent-dark: #1e40af;
-      --accent-lt: #dbeafe;
-      --accent-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      --navy: #1a3660;
+      --navy-dark: #122848;
+      --navy-gradient: linear-gradient(135deg, #122848 0%, #1e4a8a 100%);
+      --accent: #e8701a;
+      --accent-dark: #c45c10;
+      --accent-lt: #fef3e8;
+      --accent-gradient: linear-gradient(135deg, #c45c10 0%, #f97316 100%);
       --text1: #0f172a;
       --text2: #475569;
       --text3: #94a3b8;
-      --border: #e2e8f0;
+      --border: #dde3ec;
       --success: #059669;
       --danger: #dc2626;
       --shadow-sm: 0 1px 3px rgba(15,23,42,.07), 0 1px 2px rgba(15,23,42,.04);
-      --shadow: 0 4px 16px rgba(15,23,42,.08), 0 2px 4px rgba(15,23,42,.04);
-      --shadow-lg: 0 20px 48px rgba(15,23,42,.15);
+      --shadow: 0 4px 16px rgba(15,23,42,.09), 0 2px 4px rgba(15,23,42,.05);
+      --shadow-lg: 0 20px 48px rgba(15,23,42,.16);
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,22 +38,12 @@
       color: var(--text1);
       min-height: 100vh;
       line-height: 1.5;
-      padding-top: 3px;
-    }
-
-    /* ── Top accent ribbon ── */
-    .top-bar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--accent-gradient);
-      z-index: 9999;
     }
 
     .app {
       max-width: 1320px;
       margin: 0 auto;
-      padding: 2.5rem 2.5rem 5rem;
+      padding: 0 2.5rem 5rem;
     }
 
     /* ── Header ── */
@@ -58,9 +51,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2.5rem;
-      padding-bottom: 1.75rem;
-      border-bottom: 1px solid var(--border);
+      background: var(--navy-gradient);
+      padding: 1.2rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 24px rgba(18,40,72,.4);
     }
 
     .header-left {
@@ -70,36 +64,36 @@
     }
 
     .logo-mark {
-      width: 48px;
-      height: 48px;
-      border-radius: 13px;
-      background: var(--accent-gradient);
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 16px rgba(37,99,235,.4);
     }
 
-    h1 {
-      font-size: 1.6rem;
+    header h1 {
+      font-size: 1.45rem;
       font-weight: 800;
-      letter-spacing: -.025em;
-      color: var(--text1);
+      letter-spacing: -.02em;
+      color: #fff;
     }
 
-    .subtitle {
-      font-size: .78rem;
-      color: var(--text2);
-      margin-top: .2rem;
+    header .subtitle {
+      font-size: .76rem;
+      color: rgba(255,255,255,.65);
+      margin-top: .15rem;
       font-weight: 500;
       letter-spacing: .01em;
     }
 
-    /* ── Search ── */
+    /* ── Search (on dark header) ── */
     .search-wrap {
       position: relative;
-      width: 330px;
+      width: 300px;
     }
 
     .search-wrap svg {
@@ -109,40 +103,39 @@
       transform: translateY(-50%);
       width: 1rem;
       height: 1rem;
-      color: var(--text3);
+      color: rgba(255,255,255,.5);
       pointer-events: none;
     }
 
     .search {
       width: 100%;
-      padding: .68rem .875rem .68rem 2.55rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: .6rem;
+      padding: .6rem .875rem .6rem 2.5rem;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: .5rem;
       font-size: .875rem;
-      color: var(--text1);
+      color: #fff;
       outline: none;
-      box-shadow: var(--shadow-sm);
-      transition: border-color .2s, box-shadow .2s;
+      transition: background .2s, border-color .2s;
       font-family: inherit;
     }
 
     .search:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-lt);
+      background: rgba(255,255,255,.2);
+      border-color: rgba(255,255,255,.45);
     }
 
-    .search::placeholder { color: var(--text3); }
+    .search::placeholder { color: rgba(255,255,255,.42); }
 
     /* ── Tabs ── */
     .tabs {
       display: flex;
       gap: .35rem;
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.5rem;
       background: var(--surface);
       border: 1px solid var(--border);
       padding: .3rem;
-      border-radius: .6rem;
+      border-radius: .5rem;
       width: fit-content;
       box-shadow: var(--shadow-sm);
     }
@@ -150,7 +143,7 @@
     .tab {
       padding: .55rem 1.35rem;
       border: none;
-      border-radius: .4rem;
+      border-radius: .35rem;
       background: transparent;
       color: var(--text2);
       cursor: pointer;
@@ -162,9 +155,9 @@
     }
 
     .tab.active {
-      background: var(--accent-gradient);
+      background: var(--navy-gradient);
       color: #fff;
-      box-shadow: 0 2px 10px rgba(37,99,235,.35);
+      box-shadow: 0 2px 10px rgba(18,40,72,.3);
     }
 
     .tab:not(.active):hover {
@@ -172,11 +165,23 @@
       color: var(--text1);
     }
 
+    /* ── Section tag (orange uppercase label) ── */
+    .section-tag {
+      display: block;
+      font-size: .67rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .11em;
+      margin-bottom: .6rem;
+    }
+
     /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: .875rem;
+      border-top: 3px solid var(--navy);
+      border-radius: .75rem;
       padding: 2rem;
       box-shadow: var(--shadow);
     }
@@ -186,7 +191,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 1.5rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     .field { display: flex; flex-direction: column; gap: .4rem; }
@@ -202,7 +207,7 @@
     input, select {
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: .45rem;
+      border-radius: .4rem;
       padding: .62rem .75rem;
       color: var(--text1);
       font-size: .875rem;
@@ -221,7 +226,7 @@
     /* ── Table wrapper ── */
     .tbl-wrap {
       overflow-x: auto;
-      border-radius: .6rem;
+      border-radius: .5rem;
       border: 1px solid var(--border);
       margin-bottom: 2rem;
     }
@@ -229,11 +234,11 @@
     table { width: 100%; border-collapse: collapse; text-align: left; }
 
     th {
-      background: #f8fafc;
-      padding: .875rem 1rem;
+      background: #f0f4f9;
+      padding: .85rem 1rem;
       font-size: .68rem;
       font-weight: 700;
-      color: var(--text2);
+      color: var(--navy);
       text-transform: uppercase;
       letter-spacing: .07em;
       border-bottom: 1px solid var(--border);
@@ -264,13 +269,13 @@
     }
 
     .runs-table tbody tr:hover {
-      background: #f8fafc;
+      background: #fef9f5;
       border-left-color: var(--accent);
     }
 
     .run-id-cell {
       font-weight: 700;
-      color: var(--text1);
+      color: var(--navy);
       letter-spacing: -.015em;
     }
 
@@ -296,8 +301,8 @@
       line-height: 1;
     }
 
-    .badge-blue   { background: var(--accent-lt); color: var(--accent-dark); }
-    .badge-green  { background: #d1fae5; color: #065f46; }
+    .badge-blue  { background: #e8f0fb; color: var(--navy); }
+    .badge-green { background: #d1fae5; color: #065f46; }
 
     /* ── Buttons ── */
     .btn {
@@ -305,17 +310,17 @@
       color: #fff;
       border: none;
       padding: .6rem 1.25rem;
-      border-radius: .45rem;
+      border-radius: .4rem;
       font-weight: 600;
       cursor: pointer;
       transition: opacity .18s, box-shadow .18s;
       font-family: inherit;
       font-size: .875rem;
       letter-spacing: -.01em;
-      box-shadow: 0 2px 8px rgba(37,99,235,.25);
+      box-shadow: 0 2px 8px rgba(232,112,26,.28);
     }
 
-    .btn:hover { opacity: .88; box-shadow: 0 4px 16px rgba(37,99,235,.38); }
+    .btn:hover { opacity: .88; box-shadow: 0 4px 16px rgba(232,112,26,.42); }
 
     .btn.ghost {
       background: var(--surface);
@@ -361,11 +366,11 @@
     }
 
     .filter-label {
-      font-size: .7rem;
+      font-size: .68rem;
       font-weight: 700;
-      color: var(--text3);
+      color: var(--navy);
       text-transform: uppercase;
-      letter-spacing: .07em;
+      letter-spacing: .08em;
     }
 
     .filter-bar select {
@@ -373,16 +378,16 @@
       font-size: .8rem;
       min-width: 120px;
       cursor: pointer;
-      border-radius: .45rem;
+      border-radius: .4rem;
     }
 
     .row-count {
       margin-left: auto;
-      font-size: .75rem;
+      font-size: .73rem;
       font-weight: 600;
-      color: var(--text2);
-      background: #f1f5f9;
-      border: 1px solid var(--border);
+      color: var(--navy);
+      background: #e8f0fb;
+      border: 1px solid #c5d6f0;
       padding: .3rem .75rem;
       border-radius: 99px;
     }
@@ -401,7 +406,7 @@
       text-align: center;
       padding: 5rem 2rem;
       border: 2px dashed var(--border);
-      border-radius: 1rem;
+      border-radius: .75rem;
       background: var(--surface);
     }
 
@@ -436,7 +441,8 @@
 
     .modal-box {
       background: #fff;
-      border-radius: 1rem;
+      border-radius: .75rem;
+      border-top: 3px solid var(--navy);
       padding: 2rem;
       width: min(900px, 94vw);
       max-height: 90vh;
@@ -459,18 +465,19 @@
       display: inline-flex;
       align-items: center;
       gap: .4rem;
-      font-size: .68rem;
-      font-weight: 700;
+      font-size: .67rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: .09em;
+      letter-spacing: .1em;
       color: var(--accent);
       margin-bottom: .35rem;
     }
 
     .modal-title {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 800;
-      letter-spacing: -.025em;
+      letter-spacing: -.02em;
+      color: var(--navy);
     }
 
     .modal-meta {
@@ -496,7 +503,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: .45rem;
+      border-radius: .4rem;
       flex-shrink: 0;
       transition: background .15s, color .15s;
     }
@@ -512,7 +519,7 @@
     #loading-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(248,250,252,.85);
+      background: rgba(238,242,247,.88);
       display: none;
       align-items: center;
       justify-content: center;
@@ -526,7 +533,7 @@
       width: 40px;
       height: 40px;
       border: 3px solid var(--border);
-      border-top: 3px solid var(--accent);
+      border-top: 3px solid var(--navy);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -538,8 +545,8 @@
 
     /* ── Form section separator ── */
     .form-section-head {
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.25rem;
       border-bottom: 1px solid var(--border);
     }
 
@@ -553,22 +560,35 @@
       border-top: 1px solid var(--border);
       margin-top: .5rem;
     }
+
+    /* ── Browse card title bar ── */
+    .card-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -.01em;
+    }
   </style>
 </head>
 
 <body>
-  <div class="top-bar"></div>
   <div class="app">
 
     <header>
       <div class="header-left">
         <div class="logo-mark">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Strand 1: top-left → mid-right → bottom-left -->
             <path d="M7 2 C7 4 18 8 18 12 C18 16 7 20 7 22"/>
-            <!-- Strand 2: top-right → mid-left → bottom-right -->
             <path d="M17 2 C17 4 6 8 6 12 C6 16 17 20 17 22"/>
-            <!-- Base-pair rungs -->
             <line x1="9"  y1="4.5"  x2="15"  y2="4.5"/>
             <line x1="14" y1="8"    x2="10"  y2="8"/>
             <line x1="18" y1="12"   x2="6"   y2="12"/>
@@ -603,12 +623,14 @@
       <div id="input-section" style="display:none">
         <div class="card fade-in">
           <div class="form-section-head">
-            <h2 style="font-size:1.15rem;font-weight:700;letter-spacing:-.015em">New Sequence Run</h2>
-            <p style="font-size:.85rem;color:var(--text2);margin-top:.3rem">
+            <span class="section-tag">New Sequence Run</span>
+            <h2 style="font-size:1.1rem;font-weight:700;color:var(--navy);letter-spacing:-.015em">Run Entry Form</h2>
+            <p style="font-size:.83rem;color:var(--text2);margin-top:.3rem">
               Fill in run metadata — library names are pre-filled. Enter samples &amp; reads, then save.
             </p>
           </div>
 
+          <span class="section-tag">Run Information</span>
           <div class="form-grid">
             <div class="field"><label>Date</label> <input type="date" id="f-date"></div>
             <div class="field"><label>Run Details</label> <input type="text" id="f-run_id" placeholder="e.g. Run-79B"></div>
@@ -618,6 +640,7 @@
             <div class="field"><label>Loading Pattern</label> <input type="text" id="f-loading_pattern"></div>
           </div>
 
+          <span class="section-tag">Library Details</span>
           <div class="tbl-wrap">
             <table>
               <thead>
@@ -657,8 +680,8 @@
         <div>
           <div class="modal-eyebrow">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <path d="M6 3c.9 3.2 4.2 5.2 6 9s-5.1 5.8-6 9"/>
-              <path d="M18 3c-.9 3.2-4.2 5.2-6 9s5.1 5.8 6 9"/>
+              <path d="M7 2 C7 4 18 8 18 12 C18 16 7 20 7 22"/>
+              <path d="M17 2 C17 4 6 8 6 12 C6 16 17 20 17 22"/>
             </svg>
             Sequencing Run
           </div>
@@ -673,7 +696,7 @@
 
   <div id="loading-overlay">
     <div class="spinner"></div>
-    <p style="font-weight:600;color:var(--text2);font-size:.875rem">Syncing with Google Sheets…</p>
+    <p style="font-weight:600;color:var(--navy);font-size:.875rem">Syncing with Google Sheets…</p>
   </div>
 
   <script>
@@ -807,9 +830,9 @@
       const rows = filtered.length === 0
         ? `<tr><td colspan="8" style="text-align:center;padding:3.5rem;color:var(--text3)">No records match the current filters.</td></tr>`
         : filtered.map((run, idx) => {
-            const activeLibs   = run.libraries.filter(l => l.samples > 0);
-            const rowSamples   = run.libraries.reduce((s, l) => s + l.samples, 0);
-            const rowReads     = run.libraries.reduce((s, l) => s + l.reads, 0);
+            const activeLibs = run.libraries.filter(l => l.samples > 0);
+            const rowSamples = run.libraries.reduce((s, l) => s + l.samples, 0);
+            const rowReads   = run.libraries.reduce((s, l) => s + l.reads, 0);
             return `
               <tr class="fade-in" style="animation-delay:${idx*.03}s" data-run-id="${esc(run.run_id)}">
                 <td class="run-id-cell">${esc(run.run_id)}</td>
@@ -831,18 +854,21 @@
 
       out.innerHTML = `
         <div class="card" style="padding:1.5rem">
-          <div class="filter-bar">
-            <span class="filter-label">Year</span>
-            <select id="f-year">
-              <option value="">All Years</option>
-              ${yearOpts}
-            </select>
-            <span class="filter-label">Month</span>
-            <select id="f-month">
-              <option value="">All Months</option>
-              ${monthOpts}
-            </select>
-            <span class="row-count">${filtered.length} record${filtered.length !== 1 ? 's' : ''}</span>
+          <div class="card-title-bar">
+            <span class="card-title">Sequencing Run Records</span>
+            <div class="filter-bar" style="margin:0">
+              <span class="filter-label">Year</span>
+              <select id="f-year">
+                <option value="">All Years</option>
+                ${yearOpts}
+              </select>
+              <span class="filter-label">Month</span>
+              <select id="f-month">
+                <option value="">All Months</option>
+                ${monthOpts}
+              </select>
+              <span class="row-count">${filtered.length} record${filtered.length !== 1 ? 's' : ''}</span>
+            </div>
           </div>
           <div class="tbl-wrap" style="margin-bottom:0">
             <table class="runs-table">
