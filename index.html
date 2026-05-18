@@ -787,6 +787,15 @@
       return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
     }
 
+    function dateparts(str) {
+      const d = new Date(str);
+      if (isNaN(d.getTime())) return { year: str.slice(0,4), month: str.slice(5,7), iso: str };
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return { year: String(y), month: m, iso: `${y}-${m}-${day}` };
+    }
+
     // ── Tabs ──
     document.getElementById('tab-view').addEventListener('click', () => switchTab('view'));
     document.getElementById('tab-input').addEventListener('click', () => switchTab('input'));
@@ -818,16 +827,17 @@
         return;
       }
 
-      const years = [...new Set(runs.map(r => r.date.slice(0,4)))].sort().reverse();
+      const years = [...new Set(runs.map(r => dateparts(r.date).year))].filter(Boolean).sort().reverse();
       const selYear  = document.getElementById('f-year')        ? document.getElementById('f-year').value        : (years.length > 0 ? years[0] : '');
       const selMonth = document.getElementById('f-month')       ? document.getElementById('f-month').value       : '';
       const selDate  = document.getElementById('f-date-filter') ? document.getElementById('f-date-filter').value : '';
       const q = document.getElementById('search').value.toLowerCase();
 
       const filtered = runs.filter(r => {
-        if (selYear  && r.date.slice(0,4) !== selYear)  return false;
-        if (selMonth && r.date.slice(5,7) !== selMonth) return false;
-        if (selDate  && r.date !== selDate)              return false;
+        const dp = dateparts(r.date);
+        if (selYear  && dp.year  !== selYear)  return false;
+        if (selMonth && dp.month !== selMonth) return false;
+        if (selDate  && dp.iso   !== selDate)  return false;
         if (q && !(
           r.run_id.toLowerCase().includes(q) ||
           r.instrument.toLowerCase().includes(q) ||
