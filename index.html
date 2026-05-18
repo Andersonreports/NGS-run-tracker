@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,18 +10,24 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     :root {
-      --bg:        #f8fafc;
-      --surface:   #ffffff;
-      --accent:    #3b82f6;
-      --accent-lt: #eff6ff;
-      --text1:     #1e293b;
-      --text2:     #64748b;
-      --border:    #e2e8f0;
-      --success:   #10b981;
-      --shadow:    0 4px 6px -1px rgb(0 0 0/.1), 0 2px 4px -2px rgb(0 0 0/.1);
-      --loading:   #6366f1;
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --accent: #2563eb;
+      --accent-dark: #1e40af;
+      --accent-lt: #dbeafe;
+      --accent-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      --text1: #0f172a;
+      --text2: #475569;
+      --text3: #94a3b8;
+      --border: #e2e8f0;
+      --success: #059669;
+      --danger: #dc2626;
+      --shadow-sm: 0 1px 3px rgba(15,23,42,.07), 0 1px 2px rgba(15,23,42,.04);
+      --shadow: 0 4px 16px rgba(15,23,42,.08), 0 2px 4px rgba(15,23,42,.04);
+      --shadow-lg: 0 20px 48px rgba(15,23,42,.15);
     }
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', -apple-system, sans-serif;
@@ -28,689 +35,1212 @@
       color: var(--text1);
       min-height: 100vh;
       line-height: 1.5;
+      padding-top: 3px;
     }
 
-    .app { max-width:1300px; margin:0 auto; padding:2.5rem; }
+    /* ── Top accent ribbon ── */
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent-gradient);
+      z-index: 9999;
+    }
+
+    .app {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 2.5rem 2.5rem 5rem;
+    }
 
     /* ── Header ── */
     header {
-      display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:3rem; border-bottom:1px solid var(--border); padding-bottom:1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border);
     }
-    h1 { font-size:1.75rem; font-weight:700; letter-spacing:-.01em; }
-    .subtitle { font-size:.8rem; color:var(--text2); margin-top:.25rem; }
 
-    .search-wrap { position:relative; width:350px; }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+    }
+
+    .logo-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(37,99,235,.4);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -.025em;
+      color: var(--text1);
+    }
+
+    .subtitle {
+      font-size: .78rem;
+      color: var(--text2);
+      margin-top: .2rem;
+      font-weight: 500;
+      letter-spacing: .01em;
+    }
+
+    /* ── Search ── */
+    .search-wrap {
+      position: relative;
+      width: 330px;
+    }
+
     .search-wrap svg {
-      position:absolute; left:.85rem; top:50%; transform:translateY(-50%);
-      width:1rem; height:1rem; color:var(--text2); pointer-events:none;
+      position: absolute;
+      left: .875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1rem;
+      height: 1rem;
+      color: var(--text3);
+      pointer-events: none;
     }
+
     .search {
-      width:100%; padding:.6rem .75rem .6rem 2.5rem;
-      background:#f1f5f9; border:1px solid transparent; border-radius:.4rem;
-      font-size:.875rem; color:var(--text1); outline:none;
+      width: 100%;
+      padding: .68rem .875rem .68rem 2.55rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .6rem;
+      font-size: .875rem;
+      color: var(--text1);
+      outline: none;
+      box-shadow: var(--shadow-sm);
+      transition: border-color .2s, box-shadow .2s;
+      font-family: inherit;
     }
-    .search:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-lt); background:#fff; }
+
+    .search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-lt);
+    }
+
+    .search::placeholder { color: var(--text3); }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .875rem;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: box-shadow .2s, transform .2s;
+    }
+
+    .stat-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: .6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.blue   { background: #dbeafe; color: #1d4ed8; }
+    .stat-icon.green  { background: #d1fae5; color: #059669; }
+    .stat-icon.violet { background: #ede9fe; color: #7c3aed; }
+    .stat-icon.amber  { background: #fef3c7; color: #d97706; }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text1);
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+
+    .stat-label {
+      font-size: .7rem;
+      color: var(--text2);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-top: .15rem;
+    }
 
     /* ── Tabs ── */
     .tabs {
-      display:flex; gap:.5rem; margin-bottom:2rem;
-      background:#f1f5f9; padding:.25rem; border-radius:.5rem; width:fit-content;
+      display: flex;
+      gap: .35rem;
+      margin-bottom: 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: .3rem;
+      border-radius: .6rem;
+      width: fit-content;
+      box-shadow: var(--shadow-sm);
     }
-    .tab {
-      padding:.6rem 1.25rem; border:none; border-radius:.4rem;
-      background:transparent; color:var(--text2); cursor:pointer;
-      font-weight:600; font-size:.875rem; transition:all .2s;
-    }
-    .tab.active { background:#fff; color:var(--accent); box-shadow:0 2px 4px rgba(0,0,0,.05); }
 
-    /* ── Card (input form) ── */
+    .tab {
+      padding: .55rem 1.35rem;
+      border: none;
+      border-radius: .4rem;
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .875rem;
+      transition: all .18s;
+      font-family: inherit;
+      letter-spacing: -.01em;
+    }
+
+    .tab.active {
+      background: var(--accent-gradient);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(37,99,235,.35);
+    }
+
+    .tab:not(.active):hover {
+      background: #f1f5f9;
+      color: var(--text1);
+    }
+
+    /* ── Card ── */
     .card {
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:.75rem; padding:2rem; box-shadow:var(--shadow);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .875rem;
+      padding: 2rem;
+      box-shadow: var(--shadow);
     }
 
     /* ── Form ── */
     .form-grid {
-      display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:1.5rem; margin-bottom:2.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
     }
-    .field { display:flex; flex-direction:column; gap:.4rem; }
-    label { font-size:.75rem; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.05em; }
-    input, select {
-      background:#fff; border:1px solid var(--border); border-radius:.4rem;
-      padding:.6rem .75rem; color:var(--text1); font-size:.875rem;
-      outline:none; transition:border-color .2s, box-shadow .2s; font-family:inherit;
-    }
-    input:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-lt); }
 
-    /* ── Tables (shared) ── */
-    .tbl-wrap { overflow-x:auto; border-radius:.5rem; border:1px solid var(--border); margin-bottom:2rem; }
-    table { width:100%; border-collapse:collapse; text-align:left; }
-    th {
-      background:#f8fafc; padding:1rem; font-size:.75rem; font-weight:700;
-      color:var(--text2); text-transform:uppercase; border-bottom:1px solid var(--border);
-      white-space:nowrap;
+    .field { display: flex; flex-direction: column; gap: .4rem; }
+
+    label {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .07em;
     }
-    td { padding:.8rem 1rem; border-bottom:1px solid var(--border); font-size:.875rem; }
-    tr:last-child td { border-bottom:none; }
-    .total-row { background:#f8fafc; font-weight:700; }
-    .tbl-wrap input { border-radius:.25rem; padding:.4rem .5rem; font-size:.8rem; width:100%; }
+
+    input, select {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: .45rem;
+      padding: .62rem .75rem;
+      color: var(--text1);
+      font-size: .875rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-lt);
+    }
+
+    input::placeholder { color: var(--text3); }
+
+    /* ── Table wrapper ── */
+    .tbl-wrap {
+      overflow-x: auto;
+      border-radius: .6rem;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+
+    th {
+      background: #f8fafc;
+      padding: .875rem 1rem;
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: .9rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .875rem;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .total-row { background: #f8fafc; font-weight: 700; }
+
+    .tbl-wrap input {
+      border-radius: .3rem;
+      padding: .4rem .5rem;
+      font-size: .8rem;
+      width: 100%;
+    }
+
+    /* ── Browse table ── */
+    .runs-table tbody tr {
+      border-left: 3px solid transparent;
+      transition: background .12s, border-color .12s;
+    }
+
+    .runs-table tbody tr:hover {
+      background: #f8fafc;
+      border-left-color: var(--accent);
+    }
+
+    .run-id-cell {
+      font-weight: 700;
+      color: var(--text1);
+      letter-spacing: -.015em;
+    }
+
+    .date-cell { color: var(--text2); font-size: .83rem; }
+
+    .actions-cell {
+      display: flex;
+      gap: .4rem;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      padding: .25rem .65rem;
+      border-radius: 99px;
+      font-size: .78rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .badge-blue   { background: var(--accent-lt); color: var(--accent-dark); }
+    .badge-green  { background: #d1fae5; color: #065f46; }
 
     /* ── Buttons ── */
     .btn {
-      background:var(--accent); color:#fff; border:none;
-      padding:.75rem 1.5rem; border-radius:.4rem; font-weight:600;
-      cursor:pointer; transition:opacity .2s; font-family:inherit; font-size:.875rem;
+      background: var(--accent-gradient);
+      color: #fff;
+      border: none;
+      padding: .6rem 1.25rem;
+      border-radius: .45rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .18s, box-shadow .18s;
+      font-family: inherit;
+      font-size: .875rem;
+      letter-spacing: -.01em;
+      box-shadow: 0 2px 8px rgba(37,99,235,.25);
     }
-    .btn:hover { opacity:.9; }
-    .btn.ghost  { background:#f1f5f9; color:var(--text1); }
-    .btn.sm     { padding:.35rem .8rem; font-size:.75rem; }
-    .btn.danger { background:#fee2e2; color:#dc2626; }
+
+    .btn:hover { opacity: .88; box-shadow: 0 4px 16px rgba(37,99,235,.38); }
+
+    .btn.ghost {
+      background: var(--surface);
+      color: var(--text1);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn.ghost:hover { background: #f8fafc; opacity: 1; box-shadow: var(--shadow-sm); }
+
+    .btn.sm { padding: .38rem .9rem; font-size: .78rem; }
+
+    .btn.danger {
+      background: #fee2e2;
+      color: var(--danger);
+      box-shadow: none;
+      border: 1px solid #fecaca;
+    }
+
+    .btn.danger:hover { background: #fecaca; opacity: 1; }
+
     .btn-icon {
-      background:none; border:none; cursor:pointer; color:var(--text2);
-      font-size:1.1rem; line-height:1; padding:.2rem .4rem; border-radius:.25rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-size: 1.15rem;
+      line-height: 1;
+      padding: .3rem .5rem;
+      border-radius: .35rem;
+      transition: background .15s, color .15s;
     }
-    .btn-icon:hover { background:#fee2e2; color:#dc2626; }
+
+    .btn-icon:hover { background: #fee2e2; color: var(--danger); }
 
     /* ── Filter bar ── */
     .filter-bar {
-      display:flex; align-items:center; gap:.75rem; margin-bottom:1rem; flex-wrap:wrap;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
     }
-    .filter-bar select {
-      padding:.45rem .75rem; font-size:.8rem; min-width:120px; cursor:pointer;
-    }
-    .filter-bar label { font-size:.75rem; color:var(--text2); text-transform:uppercase; letter-spacing:.05em; }
-    .row-count { font-size:.8rem; color:var(--text2); margin-left:auto; }
 
-    /* ── Browse table rows ── */
-    .runs-table tbody tr { transition:background .15s; }
-    .runs-table tbody tr:hover { background:#f8fafc; }
-    .run-id-cell { font-weight:700; color:var(--text1); }
-    .actions-cell { display:flex; gap:.4rem; align-items:center; white-space:nowrap; }
+    .filter-label {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .filter-bar select {
+      padding: .45rem .75rem;
+      font-size: .8rem;
+      min-width: 120px;
+      cursor: pointer;
+      border-radius: .45rem;
+    }
+
+    .row-count {
+      margin-left: auto;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--text2);
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: .3rem .75rem;
+      border-radius: 99px;
+    }
+
+    /* ── Export footer ── */
+    .export-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 1rem;
+      margin-top: .25rem;
+      border-top: 1px solid var(--border);
+    }
 
     /* ── Empty state ── */
     .empty {
-      text-align:center; padding:5rem 2rem;
-      border:2px dashed var(--border); border-radius:1rem;
+      text-align: center;
+      padding: 5rem 2rem;
+      border: 2px dashed var(--border);
+      border-radius: 1rem;
+      background: var(--surface);
     }
-    .empty p { color:var(--text2); margin-bottom:.5rem; }
 
-    .success-msg { color:var(--success); font-weight:600; font-size:.875rem; }
+    .empty p { color: var(--text2); margin-bottom: .5rem; }
 
-    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-    .fade-in { animation:fadeIn .35s ease-out forwards; }
+    .success-msg {
+      color: var(--success);
+      font-weight: 600;
+      font-size: .875rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in { animation: fadeIn .35s ease-out forwards; }
 
     /* ── Modal ── */
     .modal-overlay {
-      display:none; position:fixed; inset:0;
-      background:rgba(15,23,42,.45); z-index:1000;
-      align-items:center; justify-content:center;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
     }
-    .modal-overlay.open { display:flex; }
+
+    .modal-overlay.open { display: flex; }
+
     .modal-box {
-      background:#fff; border-radius:.75rem; padding:2rem;
-      width:min(860px,94vw); max-height:88vh; overflow-y:auto;
-      box-shadow:0 20px 60px -10px rgb(0 0 0/.3);
-      position:relative; animation:fadeIn .2s ease-out;
+      background: #fff;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: min(900px, 94vw);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      animation: fadeIn .2s ease-out;
     }
+
     .modal-header {
-      display:flex; justify-content:space-between; align-items:flex-start;
-      margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
     }
-    .modal-title { font-size:1.2rem; font-weight:700; }
+
+    .modal-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--accent);
+      margin-bottom: .35rem;
+    }
+
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -.025em;
+    }
+
     .modal-meta {
-      display:flex; flex-wrap:wrap; gap:.5rem 1.5rem;
-      font-size:.78rem; color:var(--text2); margin-top:.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem 1.5rem;
+      font-size: .78rem;
+      color: var(--text2);
+      margin-top: .5rem;
     }
-    .modal-meta span strong { color:var(--text1); }
+
+    .modal-meta span strong { color: var(--text1); }
+
     .modal-close {
-      background:none; border:none; font-size:1.4rem; cursor:pointer;
-      color:var(--text2); line-height:1; padding:.2rem .5rem; border-radius:.25rem;
-      flex-shrink:0;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      font-size: 1.05rem;
+      cursor: pointer;
+      color: var(--text2);
+      line-height: 1;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: .45rem;
+      flex-shrink: 0;
+      transition: background .15s, color .15s;
     }
-    .modal-close:hover { background:#f1f5f9; color:var(--text1); }
 
-    ::-webkit-scrollbar { width:6px; height:6px; }
-    ::-webkit-scrollbar-track { background:#f1f5f9; }
-    ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
-    ::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+    .modal-close:hover { background: #e2e8f0; color: var(--text1); }
 
-    /* ── Loading Overlay ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* ── Loading overlay ── */
     #loading-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.7);
-      display: none; align-items: center; justify-content: center;
-      z-index: 2000; flex-direction: column; gap: 1rem;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(248,250,252,.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      flex-direction: column;
+      gap: 1rem;
+      backdrop-filter: blur(2px);
     }
+
     .spinner {
-      width: 40px; height: 40px;
-      border: 4px solid var(--border);
-      border-top: 4px solid var(--accent);
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top: 3px solid var(--accent);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ── Form section separator ── */
+    .form-section-head {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Form action bar ── */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: .75rem;
+      align-items: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: .5rem;
+    }
   </style>
 </head>
+
 <body>
-<div class="app">
+  <div class="top-bar"></div>
+  <div class="app">
 
-  <header>
-    <div>
-      <h1>NGS Run Directory</h1>
-      <p class="subtitle">Anderson Diagnostics · Sequencing Sample Management</p>
-    </div>
-    <div class="search-wrap">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-      </svg>
-      <input type="text" id="search" class="search" placeholder="Search by Run ID, Instrument, Date…">
-    </div>
-  </header>
+    <header>
+      <div class="header-left">
+        <div class="logo-mark">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3c.9 3.2 4.2 5.2 6 9s-5.1 5.8-6 9"/>
+            <path d="M18 3c-.9 3.2-4.2 5.2-6 9s5.1 5.8 6 9"/>
+            <line x1="8.5" y1="6.5" x2="15.5" y2="6.5"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+            <line x1="8.5" y1="17.5" x2="15.5" y2="17.5"/>
+          </svg>
+        </div>
+        <div>
+          <h1>NGS Run Directory</h1>
+          <p class="subtitle">Anderson Diagnostics &nbsp;·&nbsp; Sequencing Sample Management</p>
+        </div>
+      </div>
+      <div class="search-wrap">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input type="text" id="search" class="search" placeholder="Search by Run ID, Instrument, Date…">
+      </div>
+    </header>
 
-  <div class="tabs">
-    <button class="tab active" id="tab-view">Browse Records</button>
-    <button class="tab"        id="tab-input">New Entry</button>
+    <div class="tabs">
+      <button class="tab active" id="tab-view">Browse Records</button>
+      <button class="tab" id="tab-input">New Entry</button>
+    </div>
+
+    <main>
+      <!-- VIEW SECTION -->
+      <div id="view-section"></div>
+
+      <!-- INPUT SECTION -->
+      <div id="input-section" style="display:none">
+        <div class="card fade-in">
+          <div class="form-section-head">
+            <h2 style="font-size:1.15rem;font-weight:700;letter-spacing:-.015em">New Sequence Run</h2>
+            <p style="font-size:.85rem;color:var(--text2);margin-top:.3rem">
+              Fill in run metadata — library names are pre-filled. Enter samples &amp; reads, then save.
+            </p>
+          </div>
+
+          <div class="form-grid">
+            <div class="field"><label>Date</label> <input type="date" id="f-date"></div>
+            <div class="field"><label>Run Details</label> <input type="text" id="f-run_id" placeholder="e.g. Run-79B"></div>
+            <div class="field"><label>Instrument</label> <input type="text" id="f-instrument"></div>
+            <div class="field"><label>Flowcell</label> <input type="text" id="f-flowcell" placeholder="e.g. 1.1TB (1100 GB)"></div>
+            <div class="field"><label>Seq. Type</label> <input type="text" id="f-seq_type"></div>
+            <div class="field"><label>Loading Pattern</label> <input type="text" id="f-loading_pattern"></div>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:60px">S. No.</th>
+                  <th>Name of Library</th>
+                  <th style="width:150px">No. of Samples</th>
+                  <th style="width:165px">Required Reads (GB)</th>
+                  <th>Remarks</th>
+                  <th style="width:40px"></th>
+                </tr>
+              </thead>
+              <tbody id="lib-body"></tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:-1.5rem;margin-bottom:1.5rem">
+            <button class="btn ghost sm" id="add-lib-btn">+ Add Library</button>
+          </div>
+
+          <div class="form-actions">
+            <span class="success-msg" id="export-msg" style="display:none">✓ Excel downloaded</span>
+            <span class="success-msg" id="save-msg" style="display:none">✓ Saved to Google Sheets</span>
+            <button class="btn ghost" id="export-btn">Export Excel ↓</button>
+            <button class="btn" id="save-btn">Save Run</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
   </div>
 
-  <main>
-    <!-- VIEW SECTION -->
-    <div id="view-section"></div>
-
-    <!-- INPUT SECTION -->
-    <div id="input-section" style="display:none">
-      <div class="card fade-in">
-        <div style="margin-bottom:2rem">
-          <h2 style="font-size:1.25rem;font-weight:600">New Sequence Run</h2>
-          <p style="font-size:.875rem;color:var(--text2)">
-            Fill in run metadata — library names are pre-fixed. Enter samples &amp; reads, then save.
-          </p>
+  <!-- LIBRARY MODAL -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <div class="modal-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <path d="M6 3c.9 3.2 4.2 5.2 6 9s-5.1 5.8-6 9"/>
+              <path d="M18 3c-.9 3.2-4.2 5.2-6 9s5.1 5.8 6 9"/>
+            </svg>
+            Sequencing Run
+          </div>
+          <div class="modal-title" id="modal-title"></div>
+          <div class="modal-meta" id="modal-meta"></div>
         </div>
+        <button class="modal-close" id="modal-close">×</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
 
-        <div class="form-grid">
-          <div class="field"><label>Date</label>            <input type="date" id="f-date"></div>
-          <div class="field"><label>Run Details</label>     <input type="text" id="f-run_id"          placeholder="e.g. Run-79B"></div>
-          <div class="field"><label>Instrument</label>      <input type="text" id="f-instrument"></div>
-          <div class="field"><label>Flowcell</label>        <input type="text" id="f-flowcell"        placeholder="e.g. 1.1TB (1100 GB)"></div>
-          <div class="field"><label>Seq. Type</label>       <input type="text" id="f-seq_type"></div>
-          <div class="field"><label>Loading Pattern</label> <input type="text" id="f-loading_pattern"></div>
-        </div>
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p style="font-weight:600;color:var(--text2);font-size:.875rem">Syncing with Google Sheets…</p>
+  </div>
 
-        <div class="tbl-wrap">
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxKh2maAQf__hmGEJge5qFLUY9MDU3I3uMUrMB_DijzMEGOEWXJtTd9DQN7LUXgBrCz/exec';
+
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+
+    const LIBRARIES = [
+      { s_no: 1,  name: 'Exome_AND-TP-511,514,515,516,517', remarks: '' },
+      { s_no: 2,  name: 'Embryosure', remarks: '' },
+      { s_no: 3,  name: 'Sophia Exome-Adyar', remarks: '' },
+      { s_no: 4,  name: 'Myeloid-Variantplex_CMC samples', remarks: '' },
+      { s_no: 5,  name: 'CMC_Classic panel samples', remarks: '' },
+      { s_no: 6,  name: 'CMC Sample-RTR19', remarks: '' },
+      { s_no: 7,  name: 'Oncopro', remarks: '' },
+      { s_no: 8,  name: 'HLA', remarks: '' },
+      { s_no: 9,  name: 'HBB', remarks: '' },
+      { s_no: 10, name: 'Sophia Exome-AND', remarks: 'Validation' },
+      { s_no: 11, name: 'Sophia_AND_cfDNA', remarks: 'Validation' },
+      { s_no: 12, name: 'Myeloid-Variantplex_AND', remarks: 'Validation' },
+    ];
+
+    let runs = [];
+
+    function showLoading(show) {
+      document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+    }
+
+    async function fetchRuns() {
+      try {
+        showLoading(true);
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('Network response was not ok');
+        runs = await res.json();
+        renderView();
+      } catch (e) {
+        console.error('Fetch error:', e);
+        const s = localStorage.getItem('ngs_runs_v1');
+        if (s) runs = JSON.parse(s);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function apiPost(data) {
+      try {
+        showLoading(true);
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(data) });
+        return await res.json();
+      } catch (e) {
+        console.error('API Error:', e);
+        alert('Action failed. Please check your internet connection and API_URL.');
+        return { status: 'error' };
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function esc(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function formatDate(str) {
+      if (!str) return '';
+      const d = new Date(str);
+      if (isNaN(d.getTime())) return str;
+      return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+    }
+
+    // ── Tabs ──
+    document.getElementById('tab-view').addEventListener('click', () => switchTab('view'));
+    document.getElementById('tab-input').addEventListener('click', () => switchTab('input'));
+
+    function switchTab(tab) {
+      document.getElementById('tab-view').classList.toggle('active', tab === 'view');
+      document.getElementById('tab-input').classList.toggle('active', tab === 'input');
+      document.getElementById('view-section').style.display  = tab === 'view'  ? '' : 'none';
+      document.getElementById('input-section').style.display = tab === 'input' ? '' : 'none';
+      if (tab === 'view') fetchRuns();
+    }
+
+    document.getElementById('search').addEventListener('input', renderView);
+
+    // ── VIEW ──
+    function renderView() {
+      const out = document.getElementById('view-section');
+
+      if (runs.length === 0) {
+        out.innerHTML = `
+          <div class="empty">
+            <svg width="48" height="48" fill="none" stroke="var(--text3)" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 1rem">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+            </svg>
+            <p style="font-size:1rem;font-weight:600">No runs recorded yet.</p>
+            <p style="font-size:.85rem">Switch to <strong>New Entry</strong> to add the first run.</p>
+          </div>`;
+        return;
+      }
+
+      const years = [...new Set(runs.map(r => r.date.slice(0,4)))].sort().reverse();
+      const selYear  = document.getElementById('f-year')  ? document.getElementById('f-year').value  : '';
+      const selMonth = document.getElementById('f-month') ? document.getElementById('f-month').value : '';
+      const q = document.getElementById('search').value.toLowerCase();
+
+      const filtered = runs.filter(r => {
+        if (selYear  && r.date.slice(0,4) !== selYear)  return false;
+        if (selMonth && r.date.slice(5,7) !== selMonth) return false;
+        if (q && !(
+          r.run_id.toLowerCase().includes(q) ||
+          r.instrument.toLowerCase().includes(q) ||
+          r.date.includes(q) ||
+          r.flowcell.toLowerCase().includes(q) ||
+          r.libraries.some(l => l.name.toLowerCase().includes(q))
+        )) return false;
+        return true;
+      });
+
+      // Stats computed from filtered set
+      const statSamples  = filtered.reduce((s, r) => s + r.libraries.reduce((ls, l) => ls + l.samples, 0), 0);
+      const statLibs     = filtered.reduce((s, r) => s + r.libraries.filter(l => l.samples > 0).length, 0);
+      const statReads    = filtered.reduce((s, r) => s + r.libraries.reduce((ls, l) => ls + l.reads, 0), 0);
+      const statReadsFmt = statReads >= 1000
+        ? `${(statReads/1000).toFixed(2)} TB`
+        : `${statReads.toFixed(1)} GB`;
+
+      const statsHtml = `
+        <div class="stats-row fade-in">
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-value">${filtered.length}</div>
+              <div class="stat-label">Total Runs</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-value">${statSamples}</div>
+              <div class="stat-label">Total Samples</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon violet">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
+                <path d="M6 3c.9 3.2 4.2 5.2 6 9s-5.1 5.8-6 9"/>
+                <path d="M18 3c-.9 3.2-4.2 5.2-6 9s5.1 5.8 6 9"/>
+                <line x1="8.5" y1="6.5" x2="15.5" y2="6.5"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+                <line x1="8.5" y1="17.5" x2="15.5" y2="17.5"/>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-value">${statLibs}</div>
+              <div class="stat-label">Active Libraries</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon amber">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-value">${statReadsFmt}</div>
+              <div class="stat-label">Total Data</div>
+            </div>
+          </div>
+        </div>`;
+
+      const yearOpts  = years.map(y =>
+        `<option value="${y}" ${y === selYear ? 'selected' : ''}>${y}</option>`
+      ).join('');
+
+      const monthOpts = MONTHS.map((m, i) => {
+        const val = String(i+1).padStart(2,'0');
+        return `<option value="${val}" ${val === selMonth ? 'selected' : ''}>${m}</option>`;
+      }).join('');
+
+      const rows = filtered.length === 0
+        ? `<tr><td colspan="8" style="text-align:center;padding:3.5rem;color:var(--text3)">No records match the current filters.</td></tr>`
+        : filtered.map((run, idx) => {
+            const activeLibs   = run.libraries.filter(l => l.samples > 0);
+            const rowSamples   = run.libraries.reduce((s, l) => s + l.samples, 0);
+            const rowReads     = run.libraries.reduce((s, l) => s + l.reads, 0);
+            return `
+              <tr class="fade-in" style="animation-delay:${idx*.03}s" data-run-id="${esc(run.run_id)}">
+                <td class="run-id-cell">${esc(run.run_id)}</td>
+                <td class="date-cell">${formatDate(run.date)}</td>
+                <td>${esc(run.instrument)}</td>
+                <td>${esc(run.flowcell).replace(/(\d+(\.\d+)?)TB/gi, (m,p1) => `${m} (${parseFloat(p1)*1000} GB)`)}</td>
+                <td style="text-align:center">${activeLibs.length}</td>
+                <td style="text-align:center"><span class="badge badge-blue">${rowSamples}</span></td>
+                <td style="text-align:center">${rowReads.toFixed(1)} <span style="color:var(--text3);font-size:.78rem">(${(rowReads/1000).toFixed(2)} TB)</span></td>
+                <td>
+                  <div class="actions-cell">
+                    <button class="btn sm" data-action="view-libs">View Libraries</button>
+                    <button class="btn sm ghost" data-action="export">Export ↓</button>
+                    <button class="btn-icon" data-action="delete" title="Delete run">×</button>
+                  </div>
+                </td>
+              </tr>`;
+          }).join('');
+
+      out.innerHTML = `
+        ${statsHtml}
+        <div class="card" style="padding:1.5rem">
+          <div class="filter-bar">
+            <span class="filter-label">Year</span>
+            <select id="f-year">
+              <option value="">All Years</option>
+              ${yearOpts}
+            </select>
+            <span class="filter-label">Month</span>
+            <select id="f-month">
+              <option value="">All Months</option>
+              ${monthOpts}
+            </select>
+            <span class="row-count">${filtered.length} record${filtered.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="tbl-wrap" style="margin-bottom:0">
+            <table class="runs-table">
+              <thead>
+                <tr>
+                  <th>Run</th>
+                  <th>Date</th>
+                  <th>SurfSeq No.</th>
+                  <th>FCP</th>
+                  <th style="text-align:center">Libraries</th>
+                  <th style="text-align:center">Samples</th>
+                  <th style="text-align:center">Reads (GB)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="export-footer">
+            <button class="btn ghost" id="export-all-btn">Export All Records ↓</button>
+          </div>
+        </div>`;
+
+      document.getElementById('f-year').addEventListener('change', renderView);
+      document.getElementById('f-month').addEventListener('change', renderView);
+      document.getElementById('export-all-btn').addEventListener('click', exportAllExcel);
+    }
+
+    // Event delegation — table rows
+    document.getElementById('view-section').addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const row = btn.closest('[data-run-id]');
+      if (!row) return;
+      const runId = row.dataset.runId;
+      const run   = runs.find(r => r.run_id === runId);
+
+      if (btn.dataset.action === 'view-libs' && run) openModal(run);
+      if (btn.dataset.action === 'export'    && run) exportExcel(run);
+      if (btn.dataset.action === 'delete') {
+        if (!confirm(`Delete run "${runId}"? This cannot be undone.`)) return;
+        apiPost({ action: 'delete', run_id: runId }).then(res => {
+          if (res.status === 'success') fetchRuns();
+        });
+      }
+    });
+
+    // ── Modal ──
+    function openModal(run) {
+      const totalSamples = run.libraries.reduce((s, l) => s + l.samples, 0);
+      const totalReads   = run.libraries.reduce((s, l) => s + l.reads, 0);
+
+      document.getElementById('modal-title').textContent = run.run_id;
+      document.getElementById('modal-meta').innerHTML = `
+        <span><strong>Date:</strong> ${esc(run.date)}</span>
+        <span><strong>Instrument:</strong> ${esc(run.instrument)}</span>
+        <span><strong>Flowcell:</strong> ${esc(run.flowcell).replace(/(\d+(\.\d+)?)TB/gi, (m,p1) => `${m} (${parseFloat(p1)*1000} GB)`)}</span>
+        <span><strong>Seq. Type:</strong> ${esc(run.seq_type)}</span>
+        <span><strong>Loading Pattern:</strong> ${esc(run.loading_pattern)}</span>`;
+
+      document.getElementById('modal-body').innerHTML = `
+        <div class="tbl-wrap" style="margin-bottom:0">
           <table>
             <thead>
               <tr>
-                <th style="width:60px">S. No.</th>
+                <th style="width:56px">S.No</th>
                 <th>Name of Library</th>
-                <th style="width:150px">No. of Samples</th>
-                <th style="width:165px">Required Reads (GB)</th>
+                <th style="width:110px;text-align:center">Samples</th>
+                <th style="width:130px;text-align:center">Reads (GB)</th>
                 <th>Remarks</th>
-                <th style="width:40px"></th>
               </tr>
             </thead>
-            <tbody id="lib-body"></tbody>
+            <tbody>
+              ${run.libraries.map(l => `
+                <tr style="opacity:${l.samples === 0 ? .38 : 1}">
+                  <td style="text-align:center;color:var(--text3);font-weight:600">${l.s_no}</td>
+                  <td style="font-weight:${l.samples > 0 ? 600 : 400}">${esc(l.name)}</td>
+                  <td style="text-align:center">
+                    ${l.samples > 0 ? `<span class="badge badge-blue">${l.samples}</span>` : `<span style="color:var(--text3)">—</span>`}
+                  </td>
+                  <td style="text-align:center">${l.reads > 0 ? l.reads : '<span style="color:var(--text3)">—</span>'}</td>
+                  <td style="color:var(--text2);font-size:.82rem">${esc(l.remarks)}</td>
+                </tr>`).join('')}
+              <tr class="total-row">
+                <td colspan="2" style="text-align:right;padding-right:1.5rem;color:var(--text2);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em">Total</td>
+                <td style="text-align:center"><span class="badge badge-green">${totalSamples}</span></td>
+                <td style="text-align:center;font-weight:700">${totalReads.toFixed(1)}</td>
+                <td></td>
+              </tr>
+            </tbody>
           </table>
-        </div>
-        <div style="margin-top:-1.5rem;margin-bottom:1.5rem">
-          <button class="btn ghost sm" id="add-lib-btn">+ Add Library</button>
-        </div>
-
-        <div style="display:flex;justify-content:flex-end;gap:1rem;align-items:center">
-          <span class="success-msg" id="export-msg" style="display:none">✓ Excel downloaded</span>
-          <span class="success-msg" id="save-msg"   style="display:none">✓ Saved</span>
-          <button class="btn ghost" id="export-btn">Export Excel ↓</button>
-          <button class="btn"       id="save-btn">Save</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-</div>
-
-<!-- LIBRARY MODAL -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="modal-title"></div>
-        <div class="modal-meta"  id="modal-meta"></div>
-      </div>
-      <button class="modal-close" id="modal-close">×</button>
-    </div>
-    <div id="modal-body"></div>
-  </div>
-</div>
-
-<div id="loading-overlay">
-  <div class="spinner"></div>
-  <p style="font-weight: 600; color: var(--text2)">Syncing with Google Sheets...</p>
-</div>
-
-<script>
-  // ── Configuration ──
-  // IMPORTANT: Replace this with your Google Apps Script Web App URL
-  const API_URL = 'https://script.google.com/macros/s/AKfycbxKh2maAQf__hmGEJge5qFLUY9MDU3I3uMUrMB_DijzMEGOEWXJtTd9DQN7LUXgBrCz/exec';
-
-  const MONTHS = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December'];
-
-  const LIBRARIES = [
-    { s_no:  1, name: 'Exome_AND-TP-511,514,515,516,517',  remarks: '' },
-    { s_no:  2, name: 'Embryosure',                         remarks: '' },
-    { s_no:  3, name: 'Sophia Exome-Adyar',                 remarks: '' },
-    { s_no:  4, name: 'Myeloid-Variantplex_CMC samples',    remarks: '' },
-    { s_no:  5, name: 'CMC_Classic panel samples',          remarks: '' },
-    { s_no:  6, name: 'CMC Sample-RTR19',                   remarks: '' },
-    { s_no:  7, name: 'Oncopro',                            remarks: '' },
-    { s_no:  8, name: 'HLA',                                remarks: '' },
-    { s_no:  9, name: 'HBB',                                remarks: '' },
-    { s_no: 10, name: 'Sophia Exome-AND',                   remarks: 'Validation' },
-    { s_no: 11, name: 'Sophia_AND_cfDNA',                   remarks: 'Validation' },
-    { s_no: 12, name: 'Myeloid-Variantplex_AND',            remarks: 'Validation' },
-  ];
-
-  // ── State ──────────────────────────────────────────────
-  let runs = [];
-
-  function showLoading(show) {
-    document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
-  }
-
-  async function fetchRuns() {
-    try {
-      showLoading(true);
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error('Network response was not ok');
-      runs = await res.json();
-      renderView();
-    } catch(e) {
-      console.error('Fetch error:', e);
-      // Fallback to local if fetch fails (optional)
-      const s = localStorage.getItem('ngs_runs_v1');
-      if (s) runs = JSON.parse(s);
-    } finally {
-      showLoading(false);
-    }
-  }
-
-  async function apiPost(data) {
-    try {
-      showLoading(true);
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
-      return await res.json();
-    } catch(e) {
-      console.error('API Error:', e);
-      alert('Action failed. Please check your internet connection and API_URL.');
-      return { status: 'error' };
-    } finally {
-      showLoading(false);
-    }
-  }
-
-  function esc(s) {
-    return String(s ?? '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // ── Tabs ───────────────────────────────────────────────
-  document.getElementById('tab-view').addEventListener('click',  () => switchTab('view'));
-  document.getElementById('tab-input').addEventListener('click', () => switchTab('input'));
-
-  function switchTab(tab) {
-    document.getElementById('tab-view').classList.toggle('active',  tab === 'view');
-    document.getElementById('tab-input').classList.toggle('active', tab === 'input');
-    document.getElementById('view-section').style.display  = tab === 'view'  ? '' : 'none';
-    document.getElementById('input-section').style.display = tab === 'input' ? '' : 'none';
-    if (tab === 'view') fetchRuns();
-  }
-
-  document.getElementById('search').addEventListener('input', renderView);
-
-  // ── VIEW — table + filters ─────────────────────────────
-  function renderView() {
-    const out = document.getElementById('view-section');
-
-    if (runs.length === 0) {
-      out.innerHTML = `
-        <div class="empty">
-          <p style="font-size:1rem">No runs recorded yet.</p>
-          <p style="font-size:.8rem">Switch to <strong>New Entry</strong> to add the first run.</p>
         </div>`;
-      return;
+
+      document.getElementById('modal-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
 
-    // Build year options from data
-    const years = [...new Set(runs.map(r => r.date.slice(0,4)))].sort().reverse();
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
 
-    // Read current filter values (preserve across re-renders)
-    const selYear  = document.getElementById('f-year')  ? document.getElementById('f-year').value  : '';
-    const selMonth = document.getElementById('f-month') ? document.getElementById('f-month').value : '';
-    const q        = document.getElementById('search').value.toLowerCase();
-
-    const filtered = runs.filter(r => {
-      if (selYear  && r.date.slice(0,4)  !== selYear)  return false;
-      if (selMonth && r.date.slice(5,7)  !== selMonth) return false;
-      if (q && !(
-        r.run_id.toLowerCase().includes(q) ||
-        r.instrument.toLowerCase().includes(q) ||
-        r.date.includes(q) ||
-        r.flowcell.toLowerCase().includes(q) ||
-        r.libraries.some(l => l.name.toLowerCase().includes(q))
-      )) return false;
-      return true;
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-overlay').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
     });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    const yearOpts = years.map(y =>
-      `<option value="${y}" ${y === selYear ? 'selected' : ''}>${y}</option>`
-    ).join('');
+    // ── INPUT FORM ──
+    let dynLibs = [], dynCtr = 0;
 
-    const monthOpts = MONTHS.map((m,i) => {
-      const val = String(i+1).padStart(2,'0');
-      return `<option value="${val}" ${val === selMonth ? 'selected' : ''}>${m}</option>`;
-    }).join('');
+    function buildLibTable() {
+      const tbody = document.getElementById('lib-body');
+      tbody.innerHTML = LIBRARIES.map((lib, i) => `
+        <tr>
+          <td style="text-align:center;color:var(--text3);font-weight:600">${lib.s_no}</td>
+          <td style="font-weight:500;padding-left:1rem">${lib.name}</td>
+          <td><input type="number" min="0"           id="s${i}" placeholder="0"></td>
+          <td><input type="number" min="0" step=".1" id="r${i}" placeholder="0.0"></td>
+          <td><input type="text"                     id="m${i}" value="${esc(lib.remarks)}"></td>
+          <td></td>
+        </tr>`).join('') + `
+        <tr class="total-row" id="total-row">
+          <td colspan="2" style="text-align:right;padding-right:1.5rem;font-weight:700;color:var(--text2);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em">Total</td>
+          <td id="tot-s" style="font-weight:700">0</td>
+          <td id="tot-r" style="font-weight:700">0.0</td>
+          <td></td><td></td>
+        </tr>`;
+      tbody.addEventListener('input', updateTotals);
+    }
 
-    const rows = filtered.length === 0
-      ? `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text2)">No records match the current filters.</td></tr>`
-      : filtered.map((run, idx) => {
-          const activeLibs  = run.libraries.filter(l => l.samples > 0);
-          const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
-          const totalReads   = run.libraries.reduce((s,l) => s + l.reads,   0);
-          return `
-            <tr class="fade-in" style="animation-delay:${idx*.03}s" data-run-id="${esc(run.run_id)}">
-              <td class="run-id-cell">${esc(run.run_id)}</td>
-              <td>${esc(run.date)}</td>
-              <td>${esc(run.instrument)}</td>
-              <td>${esc(run.flowcell).replace(/(\d+(\.\d+)?)TB/gi, (m, p1) => `${m} (${parseFloat(p1) * 1000} GB)`)}</td>
-              <td style="text-align:center">${activeLibs.length}</td>
-              <td style="text-align:center;font-weight:600;color:var(--accent)">${totalSamples}</td>
-              <td style="text-align:center">${totalReads.toFixed(1)} (${(totalReads / 1000).toFixed(2)} TB)</td>
-              <td>
-                <div class="actions-cell">
-                  <button class="btn sm" data-action="view-libs">View Libraries</button>
-                  <button class="btn sm ghost" data-action="export">Export ↓</button>
-                  <button class="btn-icon" data-action="delete" title="Delete">×</button>
-                </div>
-              </td>
-            </tr>`;
-        }).join('');
+    function addDynRow() {
+      const id = ++dynCtr;
+      dynLibs.push({ id });
+      const totalRow = document.getElementById('total-row');
+      const tr = document.createElement('tr');
+      tr.id = `dyn-${id}`;
+      tr.innerHTML = `
+        <td style="text-align:center;color:var(--text3);font-weight:600">—</td>
+        <td><input type="text"   id="dn${id}" placeholder="Library name" style="width:100%"></td>
+        <td><input type="number" min="0"           id="ds${id}" placeholder="0"   style="width:100%"></td>
+        <td><input type="number" min="0" step=".1" id="dr${id}" placeholder="0.0" style="width:100%"></td>
+        <td><input type="text"   id="dm${id}" placeholder="" style="width:100%"></td>
+        <td><button class="btn-icon" onclick="removeDynRow(${id})" title="Remove">×</button></td>`;
+      tr.addEventListener('input', updateTotals);
+      totalRow.parentNode.insertBefore(tr, totalRow);
+    }
 
-    out.innerHTML = `
-      <div class="card" style="padding:1.5rem">
-        <div class="filter-bar">
-          <label>Year</label>
-          <select id="f-year">
-            <option value="">All Years</option>
-            ${yearOpts}
-          </select>
-          <label>Month</label>
-          <select id="f-month">
-            <option value="">All Months</option>
-            ${monthOpts}
-          </select>
-          <span class="row-count">${filtered.length} record${filtered.length !== 1 ? 's' : ''}</span>
-        </div>
-        <div class="tbl-wrap" style="margin-bottom:0">
-          <table class="runs-table">
-            <thead>
-              <tr>
-                <th>Run</th>
-                <th>Date</th>
-                <th>SurfSeq No.</th>
-                <th>FCP</th>
-                <th style="text-align:center">Libraries</th>
-                <th style="text-align:center">Samples</th>
-                <th style="text-align:center">Reads (GB)</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      </div>`;
+    function removeDynRow(id) {
+      dynLibs = dynLibs.filter(l => l.id !== id);
+      const el = document.getElementById(`dyn-${id}`);
+      if (el) el.remove();
+      updateTotals();
+    }
 
-    document.getElementById('f-year').addEventListener('change',  renderView);
-    document.getElementById('f-month').addEventListener('change', renderView);
-  }
-
-  // Event delegation — table rows
-  document.getElementById('view-section').addEventListener('click', function(e) {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const row   = btn.closest('[data-run-id]');
-    if (!row) return;
-    const runId = row.dataset.runId;
-    const run   = runs.find(r => r.run_id === runId);
-
-    if (btn.dataset.action === 'view-libs' && run) openModal(run);
-    if (btn.dataset.action === 'export'    && run) exportExcel(run);
-    if (btn.dataset.action === 'delete') {
-      if (!confirm(`Delete run "${runId}"?`)) return;
-      apiPost({ action: 'delete', run_id: runId }).then(res => {
-        if (res.status === 'success') fetchRuns();
+    function updateTotals() {
+      let ts = 0, tr = 0;
+      LIBRARIES.forEach((_, i) => {
+        ts += Number(document.getElementById(`s${i}`).value) || 0;
+        tr += Number(document.getElementById(`r${i}`).value) || 0;
       });
+      dynLibs.forEach(l => {
+        ts += Number(document.getElementById(`ds${l.id}`)?.value) || 0;
+        tr += Number(document.getElementById(`dr${l.id}`)?.value) || 0;
+      });
+      document.getElementById('tot-s').textContent = ts;
+      document.getElementById('tot-r').textContent = tr.toFixed(1);
     }
-  });
 
-  // ── Modal ──────────────────────────────────────────────
-  function openModal(run) {
-    const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
-    const totalReads   = run.libraries.reduce((s,l) => s + l.reads,   0);
-
-    document.getElementById('modal-title').textContent = run.run_id;
-    document.getElementById('modal-meta').innerHTML = `
-      <span><strong>Date:</strong> ${esc(run.date)}</span>
-      <span><strong>Instrument:</strong> ${esc(run.instrument)}</span>
-      <span><strong>Flowcell:</strong> ${esc(run.flowcell).replace(/(\d+(\.\d+)?)TB/gi, (m, p1) => `${m} (${parseFloat(p1) * 1000} GB)`)}</span>
-      <span><strong>Seq. Type:</strong> ${esc(run.seq_type)}</span>
-      <span><strong>Loading Pattern:</strong> ${esc(run.loading_pattern)}</span>`;
-
-    document.getElementById('modal-body').innerHTML = `
-      <div class="tbl-wrap" style="margin-bottom:0">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:56px">S.No</th>
-              <th>Name of Library</th>
-              <th style="width:110px;text-align:center">Samples</th>
-              <th style="width:130px;text-align:center">Reads (GB)</th>
-              <th>Remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${run.libraries.map(l => `
-              <tr style="opacity:${l.samples === 0 ? .4 : 1}">
-                <td style="text-align:center;color:var(--text2)">${l.s_no}</td>
-                <td style="font-weight:${l.samples > 0 ? 600 : 400}">${esc(l.name)}</td>
-                <td style="text-align:center">${l.samples}</td>
-                <td style="text-align:center">${l.reads}</td>
-                <td style="color:var(--text2)">${esc(l.remarks)}</td>
-              </tr>`).join('')}
-            <tr class="total-row">
-              <td colspan="2" style="text-align:right;padding-right:1.5rem">Total</td>
-              <td style="text-align:center">${totalSamples}</td>
-              <td style="text-align:center">${totalReads.toFixed(1)}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>`;
-
-    document.getElementById('modal-overlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  document.getElementById('modal-close').addEventListener('click', closeModal);
-  document.getElementById('modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-  // ── INPUT FORM ─────────────────────────────────────────
-  let dynLibs = [];   // [{id}] for custom rows added by user
-  let dynCtr  = 0;
-
-  function buildLibTable() {
-    const tbody = document.getElementById('lib-body');
-    tbody.innerHTML = LIBRARIES.map((lib, i) => `
-      <tr>
-        <td style="text-align:center;color:var(--text2);font-weight:600">${lib.s_no}</td>
-        <td style="font-weight:500;padding-left:1rem">${lib.name}</td>
-        <td><input type="number" min="0"        id="s${i}" placeholder="0"  ></td>
-        <td><input type="number" min="0" step=".1" id="r${i}" placeholder="0.0"></td>
-        <td><input type="text"                  id="m${i}" value="${esc(lib.remarks)}"></td>
-        <td></td>
-      </tr>`).join('') + `
-      <tr class="total-row" id="total-row">
-        <td colspan="2" style="text-align:right;padding-right:1.5rem;font-weight:700">Total</td>
-        <td id="tot-s" style="font-weight:700">0</td>
-        <td id="tot-r" style="font-weight:700">0.0</td>
-        <td></td><td></td>
-      </tr>`;
-    tbody.addEventListener('input', updateTotals);
-  }
-
-  function addDynRow() {
-    const id  = ++dynCtr;
-    dynLibs.push({ id });
-    const totalRow = document.getElementById('total-row');
-    const tr = document.createElement('tr');
-    tr.id = `dyn-${id}`;
-    tr.innerHTML = `
-      <td style="text-align:center;color:var(--text2);font-weight:600">—</td>
-      <td><input type="text"   id="dn${id}" placeholder="Library name" style="width:100%"></td>
-      <td><input type="number" min="0"        id="ds${id}" placeholder="0"   style="width:100%"></td>
-      <td><input type="number" min="0" step=".1" id="dr${id}" placeholder="0.0" style="width:100%"></td>
-      <td><input type="text"   id="dm${id}" placeholder="" style="width:100%"></td>
-      <td><button class="btn-icon" onclick="removeDynRow(${id})" title="Remove">×</button></td>`;
-    tr.addEventListener('input', updateTotals);
-    totalRow.parentNode.insertBefore(tr, totalRow);
-  }
-
-  function removeDynRow(id) {
-    dynLibs = dynLibs.filter(l => l.id !== id);
-    const el = document.getElementById(`dyn-${id}`);
-    if (el) el.remove();
-    updateTotals();
-  }
-
-  function updateTotals() {
-    let ts = 0, tr = 0;
-    LIBRARIES.forEach((_,i) => {
-      ts += Number(document.getElementById(`s${i}`).value) || 0;
-      tr += Number(document.getElementById(`r${i}`).value) || 0;
-    });
-    dynLibs.forEach(l => {
-      ts += Number(document.getElementById(`ds${l.id}`)?.value) || 0;
-      tr += Number(document.getElementById(`dr${l.id}`)?.value) || 0;
-    });
-    document.getElementById('tot-s').textContent = ts;
-    document.getElementById('tot-r').textContent = tr.toFixed(1);
-  }
-
-  function resetForm() {
-    document.getElementById('f-date').value            = new Date().toISOString().split('T')[0];
-    document.getElementById('f-run_id').value          = '';
-    document.getElementById('f-instrument').value      = 'Surfseq5000';
-    document.getElementById('f-flowcell').value        = '';
-    document.getElementById('f-seq_type').value        = 'PE 150';
-    document.getElementById('f-loading_pattern').value = 'Standard-Automatic';
-    LIBRARIES.forEach((lib,i) => {
-      document.getElementById(`s${i}`).value = '';
-      document.getElementById(`r${i}`).value = '';
-      document.getElementById(`m${i}`).value = lib.remarks;
-    });
-    // Remove all dynamic rows
-    dynLibs.forEach(l => { const el = document.getElementById(`dyn-${l.id}`); if (el) el.remove(); });
-    dynLibs = [];
-    updateTotals();
-  }
-
-  function readFormRun() {
-    return {
-      date:            document.getElementById('f-date').value,
-      run_id:          document.getElementById('f-run_id').value.trim(),
-      instrument:      document.getElementById('f-instrument').value,
-      flowcell:        document.getElementById('f-flowcell').value,
-      seq_type:        document.getElementById('f-seq_type').value,
-      loading_pattern: document.getElementById('f-loading_pattern').value,
-      libraries: [
-        ...LIBRARIES.map((lib,i) => ({
-          s_no:    lib.s_no,
-          name:    lib.name,
-          samples: Number(document.getElementById(`s${i}`).value) || 0,
-          reads:   Number(document.getElementById(`r${i}`).value) || 0,
-          remarks: document.getElementById(`m${i}`).value,
-        })),
-        ...dynLibs.map(l => ({
-          s_no:    '—',
-          name:    document.getElementById(`dn${l.id}`)?.value.trim() || 'Custom Library',
-          samples: Number(document.getElementById(`ds${l.id}`)?.value) || 0,
-          reads:   Number(document.getElementById(`dr${l.id}`)?.value) || 0,
-          remarks: document.getElementById(`dm${l.id}`)?.value || '',
-        })).filter(l => l.name !== 'Custom Library' || l.samples > 0),
-      ],
-    };
-  }
-
-  document.getElementById('add-lib-btn').addEventListener('click', addDynRow);
-
-  function flashMsg(id) {
-    const el = document.getElementById(id);
-    el.style.display = 'inline';
-    setTimeout(() => { el.style.display = 'none'; }, 2500);
-  }
-
-  document.getElementById('save-btn').addEventListener('click', async function() {
-    const run = readFormRun();
-    if (!run.run_id) { alert('Please enter a Run ID'); return; }
-    
-    const res = await apiPost({ action: 'save', run });
-    if (res.status === 'success') {
-      flashMsg('save-msg');
-      resetForm();
-      setTimeout(() => switchTab('view'), 600);
+    function resetForm() {
+      document.getElementById('f-date').value             = new Date().toISOString().split('T')[0];
+      document.getElementById('f-run_id').value           = '';
+      document.getElementById('f-instrument').value       = 'Surfseq5000';
+      document.getElementById('f-flowcell').value         = '';
+      document.getElementById('f-seq_type').value         = 'PE 150';
+      document.getElementById('f-loading_pattern').value  = 'Standard-Automatic';
+      LIBRARIES.forEach((lib, i) => {
+        document.getElementById(`s${i}`).value = '';
+        document.getElementById(`r${i}`).value = '';
+        document.getElementById(`m${i}`).value = lib.remarks;
+      });
+      dynLibs.forEach(l => { const el = document.getElementById(`dyn-${l.id}`); if (el) el.remove(); });
+      dynLibs = [];
+      updateTotals();
     }
-  });
 
-  document.getElementById('export-btn').addEventListener('click', function() {
-    const run = readFormRun();
-    if (!run.run_id) { alert('Please enter a Run ID before exporting'); return; }
-    exportExcel(run);
-    flashMsg('export-msg');
-  });
+    function readFormRun() {
+      return {
+        date:            document.getElementById('f-date').value,
+        run_id:          document.getElementById('f-run_id').value.trim(),
+        instrument:      document.getElementById('f-instrument').value,
+        flowcell:        document.getElementById('f-flowcell').value,
+        seq_type:        document.getElementById('f-seq_type').value,
+        loading_pattern: document.getElementById('f-loading_pattern').value,
+        libraries: [
+          ...LIBRARIES.map((lib, i) => ({
+            s_no:    lib.s_no,
+            name:    lib.name,
+            samples: Number(document.getElementById(`s${i}`).value) || 0,
+            reads:   Number(document.getElementById(`r${i}`).value) || 0,
+            remarks: document.getElementById(`m${i}`).value,
+          })),
+          ...dynLibs.map(l => ({
+            s_no:    '—',
+            name:    document.getElementById(`dn${l.id}`)?.value.trim() || 'Custom Library',
+            samples: Number(document.getElementById(`ds${l.id}`)?.value) || 0,
+            reads:   Number(document.getElementById(`dr${l.id}`)?.value) || 0,
+            remarks: document.getElementById(`dm${l.id}`)?.value || '',
+          })).filter(l => l.name !== 'Custom Library' || l.samples > 0),
+        ],
+      };
+    }
 
-  // ── Excel export ───────────────────────────────────────
-  function exportExcel(run) {
-    const totalSamples = run.libraries.reduce((s,l) => s + l.samples, 0);
-    const totalReads   = run.libraries.reduce((s,l) => s + l.reads,   0);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
-      ['Date','Run ID','Instrument','Flowcell','Seq. Type','Loading Pattern'],
-      [run.date, run.run_id, run.instrument, run.flowcell, run.seq_type, run.loading_pattern],
-    ]), 'Run Details');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
-      ['S. No.','Name of Library','No. of Samples','Required Reads (GB)','Remarks'],
-      ...run.libraries.map(l => [l.s_no, l.name, l.samples, l.reads, l.remarks]),
-      ['','Total', totalSamples, totalReads.toFixed(1), ''],
-    ]), 'Libraries');
-    XLSX.writeFile(wb, `${run.run_id}_${run.date}.xlsx`);
-  }
+    document.getElementById('add-lib-btn').addEventListener('click', addDynRow);
 
-  // ── Init ───────────────────────────────────────────────
-  buildLibTable();
-  resetForm();
-  fetchRuns();
-</script>
+    function flashMsg(id) {
+      const el = document.getElementById(id);
+      el.style.display = 'inline';
+      setTimeout(() => { el.style.display = 'none'; }, 2500);
+    }
+
+    document.getElementById('save-btn').addEventListener('click', async function () {
+      const run = readFormRun();
+      if (!run.run_id) { alert('Please enter a Run ID'); return; }
+      const res = await apiPost({ action: 'save', run });
+      if (res.status === 'success') {
+        flashMsg('save-msg');
+        resetForm();
+        setTimeout(() => switchTab('view'), 600);
+      }
+    });
+
+    document.getElementById('export-btn').addEventListener('click', function () {
+      const run = readFormRun();
+      if (!run.run_id) { alert('Please enter a Run ID before exporting'); return; }
+      exportExcel(run);
+      flashMsg('export-msg');
+    });
+
+    // ── Excel export ──
+    function exportExcel(run) {
+      const wb   = XLSX.utils.book_new();
+      const rows = [
+        [`RUN: ${run.run_id}`],
+        ['S.No', 'Name of Library', 'Samples', 'Reads (GB)', 'Remarks']
+      ];
+      run.libraries.forEach(l => rows.push([l.s_no, l.name, l.samples, l.reads, l.remarks]));
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Libraries');
+      XLSX.writeFile(wb, `${run.run_id}_${formatDate(run.date)}.xlsx`);
+    }
+
+    function exportAllExcel() {
+      if (!runs || runs.length === 0) { alert('No data to export'); return; }
+      const wb     = XLSX.utils.book_new();
+      const rows   = [];
+      const merges = [];
+
+      runs.forEach(r => {
+        const startRow = rows.length;
+        rows.push([`RUN: ${r.run_id} (${formatDate(r.date)})`]);
+        merges.push({ s: { r: startRow, c: 0 }, e: { r: startRow, c: 4 } });
+        rows.push(['S.No', 'Name of Library', 'Samples', 'Reads (GB)', 'Remarks']);
+        r.libraries.forEach(l => rows.push([l.s_no, l.name, l.samples, l.reads, l.remarks]));
+        rows.push([]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!merges'] = merges;
+      XLSX.utils.book_append_sheet(wb, ws, 'All Libraries');
+      XLSX.writeFile(wb, `NGS_Run_Tracker_All_Records_${formatDate(new Date())}.xlsx`);
+    }
+
+    // ── Init ──
+    buildLibTable();
+    resetForm();
+    fetchRuns();
+  </script>
 </body>
+
 </html>
