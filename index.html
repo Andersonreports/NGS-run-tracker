@@ -134,63 +134,6 @@
 
     .search::placeholder { color: var(--text3); }
 
-    /* ── Stats row ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.75rem;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: .875rem;
-      padding: 1.25rem 1.4rem;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: box-shadow .2s, transform .2s;
-    }
-
-    .stat-card:hover {
-      box-shadow: var(--shadow);
-      transform: translateY(-1px);
-    }
-
-    .stat-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: .6rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .stat-icon.blue   { background: #dbeafe; color: #1d4ed8; }
-    .stat-icon.green  { background: #d1fae5; color: #059669; }
-    .stat-icon.violet { background: #ede9fe; color: #7c3aed; }
-    .stat-icon.amber  { background: #fef3c7; color: #d97706; }
-
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--text1);
-      line-height: 1.2;
-      letter-spacing: -.02em;
-    }
-
-    .stat-label {
-      font-size: .7rem;
-      color: var(--text2);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      margin-top: .15rem;
-    }
-
     /* ── Tabs ── */
     .tabs {
       display: flex;
@@ -847,72 +790,6 @@
         return true;
       });
 
-      // Stats computed from filtered set
-      const statSamples  = filtered.reduce((s, r) => s + r.libraries.reduce((ls, l) => ls + l.samples, 0), 0);
-      const statLibs     = filtered.reduce((s, r) => s + r.libraries.filter(l => l.samples > 0).length, 0);
-      const statReads    = filtered.reduce((s, r) => s + r.libraries.reduce((ls, l) => ls + l.reads, 0), 0);
-      const statReadsFmt = statReads >= 1000
-        ? `${(statReads/1000).toFixed(2)} TB`
-        : `${statReads.toFixed(1)} GB`;
-
-      const statsHtml = `
-        <div class="stats-row fade-in">
-          <div class="stat-card">
-            <div class="stat-icon blue">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-                <rect x="9" y="3" width="6" height="4" rx="1"/>
-                <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/>
-              </svg>
-            </div>
-            <div>
-              <div class="stat-value">${filtered.length}</div>
-              <div class="stat-label">Total Runs</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon green">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
-              </svg>
-            </div>
-            <div>
-              <div class="stat-value">${statSamples}</div>
-              <div class="stat-label">Total Samples</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon violet">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
-                <path d="M6 3c.9 3.2 4.2 5.2 6 9s-5.1 5.8-6 9"/>
-                <path d="M18 3c-.9 3.2-4.2 5.2-6 9s5.1 5.8 6 9"/>
-                <line x1="8.5" y1="6.5" x2="15.5" y2="6.5"/>
-                <line x1="8" y1="12" x2="16" y2="12"/>
-                <line x1="8.5" y1="17.5" x2="15.5" y2="17.5"/>
-              </svg>
-            </div>
-            <div>
-              <div class="stat-value">${statLibs}</div>
-              <div class="stat-label">Active Libraries</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon amber">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <ellipse cx="12" cy="5" rx="9" ry="3"/>
-                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
-              </svg>
-            </div>
-            <div>
-              <div class="stat-value">${statReadsFmt}</div>
-              <div class="stat-label">Total Data</div>
-            </div>
-          </div>
-        </div>`;
-
       const yearOpts  = years.map(y =>
         `<option value="${y}" ${y === selYear ? 'selected' : ''}>${y}</option>`
       ).join('');
@@ -948,7 +825,6 @@
           }).join('');
 
       out.innerHTML = `
-        ${statsHtml}
         <div class="card" style="padding:1.5rem">
           <div class="filter-bar">
             <span class="filter-label">Year</span>
